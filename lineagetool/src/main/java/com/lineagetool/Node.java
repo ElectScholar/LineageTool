@@ -1,23 +1,28 @@
 package com.lineagetool;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Node<T extends Person> {
+    public T val;
+    public List<Node<T>> next; // Children
+    public List<Node<T>> prev; // Parents
 
-    public T val = null;
-    public Node next = null;
-    public Node prev = null;
-
-    public Node(T person){
+    public Node(T person) {
         this.val = person;
+        this.next = new ArrayList<>();
+        this.prev = new ArrayList<>();
     }
-    public Node(T val, Node prev){
+
+    public Node(T val, List<Node<T>> prev) {
         this.val = val;
+        this.next = new ArrayList<>();
         this.prev = prev;
     }
 
-    public Node(T val, Node next, Node prev){
+    public Node(T val, List<Node<T>> next, List<Node<T>> prev) {
         this.val = val;
         this.next = next;
         this.prev = prev;
     }
-
 }
