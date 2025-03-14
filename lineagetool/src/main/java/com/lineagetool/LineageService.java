@@ -1,5 +1,7 @@
 package com.lineagetool;
 
+import java.util.ArrayList;
+
 public class LineageService implements DoublyLinkedList<Node<Person>> {
     private int size = 0;
     private Node<Person> head;
@@ -14,8 +16,12 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
     @Override
     public void addFirst(Node<Person> data) {
         if (data == null) return;
-        data.next = head;
-        if (head != null) head.prev = data;
+        
+        if (head != null) {
+            data.next.add(head);
+            head.prev.add(data);
+        }
+        
         head = data;
         if (tail == null) tail = head;
         size++;
@@ -24,23 +30,30 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
     @Override
     public void addLast(Node<Person> data) {
         if (data == null) return;
-        if (tail == null) {
-            head = tail = data;
-        } else {
-            tail.next = data;
-            data.prev = tail;
-            tail = data;
+        
+        if (tail != null) {
+            tail.next.add(data);
+            data.prev.add(tail);
         }
+
+        tail = data;
+        if (head == null) head = tail;
         size++;
     }
 
     @Override
     public Node<Person> removeFirst() {
         if (head == null) return null;
+        
         Node<Person> removed = head;
-        head = head.next;
-        if (head != null) head.prev = null;
-        else tail = null; // If list is empty, tail should also be null
+        if (!head.next.isEmpty()) {
+            head = head.next.get(0); // Move to the first child (if any)
+            head.prev.clear();
+        } else {
+            head = null;
+            tail = null;
+        }
+        
         size--;
         return removed;
     }
@@ -48,10 +61,16 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
     @Override
     public Node<Person> removeLast() {
         if (tail == null) return null;
+        
         Node<Person> removed = tail;
-        tail = tail.prev;
-        if (tail != null) tail.next = null;
-        else head = null; // If list is empty, head should also be null
+        if (!tail.prev.isEmpty()) {
+            tail = tail.prev.get(0); // Move to first parent (if any)
+            tail.next.clear();
+        } else {
+            head = null;
+            tail = null;
+        }
+        
         size--;
         return removed;
     }
@@ -61,15 +80,6 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
         return head;
     }
 
-    public Node<Person> getNode(String name){
-        while (head != null){
-            if (head.val.getName() == name) return head;
-            head = head.next;
-        }
-        System.out.println("Cant find node: " + name);
-        return null;
-    }
-
     @Override
     public Node<Person> getLast() {
         return tail;
@@ -77,6 +87,7 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
 
     @Override
     public boolean isEmpty() {
+
         return size == 0;
     }
 
@@ -85,9 +96,69 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
         return size;
     }
 
-    public void toString(Node<Person> node){
-        String person = node.val.getName();
-        System.out.println(person + " son of " + node.prev.val.getName());
-        System.out.print(person + " father of " + node.next.val.getName());
+public void addChild(Node<Person> child, String father) {
+    Node<Person> curr = head;
+    
+    while (curr != null) {
+        if (curr.val.getName().equals(father)) {
+            if (curr.next == null) {
+                curr.next = new ArrayList<>(); // Ensure list exists
+            }
+            curr.next.add(child);
+
+            if (child.prev == null) {
+                child.prev = new ArrayList<>(); // Ensure list exists
+            }
+            child.prev.add(curr);
+
+            System.out.println("Added child: " + child.val.getName() + " to father: " + father);
+            return; // Exit once the father is found
+        }
+        curr = curr.next.get(0); // Move to next node in the list
     }
+
+    System.out.println("addChild() could not find father: " + father + " so unable to add " + child.val.getName());
+}
+
+
+    public Node<Person> getNode(String name) {
+        Node<Person> current = head;
+        while (current != null) {
+            if (current.val.getName().equals(name)) return current;
+            if (!current.next.isEmpty()) {
+                current = current.next.get(0); // Navigate to first child (if any)
+            } else {
+                break;
+            }
+        }
+        System.out.println("Cannot find node: " + name);
+        return null;
+    }
+
+    public void printLineage(Node<Person> node) {
+        if (node == null) return;
+    
+        System.out.print(node.val.getName());
+    
+        // Print parents
+        if (node.prev != null && !node.prev.isEmpty()) {
+            System.out.print(" (Child of: ");
+            for (Node<Person> parent : node.prev) {
+                System.out.print(parent.val.getName() + ", ");
+            }
+            System.out.print(")");
+        }
+    
+        // Print children
+        if (node.next != null && !node.next.isEmpty()) {
+            System.out.print(" (Parent of: ");
+            for (Node<Person> child : node.next) {
+                System.out.print(child.val.getName() + ", ");
+            }
+            System.out.print(")");
+        }
+    
+        System.out.println();
+    }
+    
 }

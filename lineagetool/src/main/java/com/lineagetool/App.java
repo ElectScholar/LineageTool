@@ -19,7 +19,9 @@ public class App
         Person sonOfReuben = new Person("Son of Reuben", defaultStringDescription);
         israelLineageService.addLast(new Node<>(sonOfReuben));
 
+        Person testSecondSonOfReuben = new Person("Second Son of Reuben", defaultStringDescription);
+        israelLineageService.addChild(new Node<>(testSecondSonOfReuben), "Reuben");
         Node<Person> test = israelLineageService.getNode("Reuben");
-        israelLineageService.toString(test);
+        israelLineageService.printLineage(test);
     }
 }
