@@ -1,9 +1,9 @@
 package com.lineagetool;
 
-public class LineageService implements DoublyLinkedList<Node> {
+public class LineageService implements DoublyLinkedList<Node<Person>> {
     private int size = 0;
-    private Node head;
-    private Node tail;
+    private Node<Person> head;
+    private Node<Person> tail;
 
     public LineageService() {
         head = null;
@@ -12,7 +12,7 @@ public class LineageService implements DoublyLinkedList<Node> {
     }
 
     @Override
-    public void addFirst(Node data) {
+    public void addFirst(Node<Person> data) {
         if (data == null) return;
         data.next = head;
         if (head != null) head.prev = data;
@@ -22,7 +22,7 @@ public class LineageService implements DoublyLinkedList<Node> {
     }
 
     @Override
-    public void addLast(Node data) {
+    public void addLast(Node<Person> data) {
         if (data == null) return;
         if (tail == null) {
             head = tail = data;
@@ -35,9 +35,9 @@ public class LineageService implements DoublyLinkedList<Node> {
     }
 
     @Override
-    public Node removeFirst() {
+    public Node<Person> removeFirst() {
         if (head == null) return null;
-        Node removed = head;
+        Node<Person> removed = head;
         head = head.next;
         if (head != null) head.prev = null;
         else tail = null; // If list is empty, tail should also be null
@@ -46,9 +46,9 @@ public class LineageService implements DoublyLinkedList<Node> {
     }
 
     @Override
-    public Node removeLast() {
+    public Node<Person> removeLast() {
         if (tail == null) return null;
-        Node removed = tail;
+        Node<Person> removed = tail;
         tail = tail.prev;
         if (tail != null) tail.next = null;
         else head = null; // If list is empty, head should also be null
@@ -57,12 +57,21 @@ public class LineageService implements DoublyLinkedList<Node> {
     }
 
     @Override
-    public Node getFirst() {
+    public Node<Person> getFirst() {
         return head;
     }
 
+    public Node<Person> getNode(String name){
+        while (head != null){
+            if (head.val.getName() == name) return head;
+            head = head.next;
+        }
+        System.out.println("Cant find node: " + name);
+        return null;
+    }
+
     @Override
-    public Node getLast() {
+    public Node<Person> getLast() {
         return tail;
     }
 
@@ -74,5 +83,11 @@ public class LineageService implements DoublyLinkedList<Node> {
     @Override
     public int size() {
         return size;
+    }
+
+    public void toString(Node<Person> node){
+        String person = node.val.getName();
+        System.out.println(person + " son of " + node.prev.val.getName());
+        System.out.print(person + " father of " + node.next.val.getName());
     }
 }
