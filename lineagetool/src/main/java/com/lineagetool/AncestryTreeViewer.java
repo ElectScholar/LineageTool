@@ -1,16 +1,9 @@
 package com.lineagetool;
-
+// Driver class
 import javax.swing.SwingUtilities;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        LineagePopulate populate = new LineagePopulate();
+public class AncestryTreeViewer {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             LineagePopulate populator = new LineagePopulate();
             LineageService service = populator.getLineageService();

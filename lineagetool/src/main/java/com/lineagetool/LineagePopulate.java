@@ -8,6 +8,9 @@ public class LineagePopulate {
  * defaultStringDescrtiption has fields in each index
  *  0: Tribe Origin, 1: Lifespan, 2: Scripture found on character
  */
+
+    private LineageService lineageService;
+    
     public LineagePopulate() {
         //Originator of Israel Jacob
         LineageService israelLineageService = new LineageService();
@@ -68,6 +71,9 @@ public class LineagePopulate {
         israelLineageService.addChild(new Node<>(testSecondSonOfReuben), "Reuben");
         Node<Person> test = israelLineageService.getNode("Reuben");
         israelLineageService.printLineage(test);
+    }
+    public LineageService getLineageService() {
+        return lineageService;
     }
     
     
