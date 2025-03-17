@@ -11,10 +11,11 @@ public class App
     public static void main( String[] args )
     {
         LineagePopulate populate = new LineagePopulate();
+        LineageService lineageService = populate.getLineageService();
+        
         SwingUtilities.invokeLater(() -> {
-            LineagePopulate populator = new LineagePopulate();
-            LineageService service = populator.getLineageService();
-            new AncestryTreeGUI(service);
+            LineageViewer viewer = new LineageViewer(lineageService);
+            viewer.setVisible(true);
         });
     }
 }

@@ -1,6 +1,8 @@
 package com.lineagetool;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class LineageService implements DoublyLinkedList<Node<Person>> {
     private int size = 0;
@@ -121,19 +123,26 @@ public void addChild(Node<Person> child, String father) {
 }
 
 
-    public Node<Person> getNode(String name) {
-        Node<Person> current = head;
-        while (current != null) {
-            if (current.val.getName().equals(name)) return current;
-            if (!current.next.isEmpty()) {
-                current = current.next.get(0); // Navigate to first child (if any)
-            } else {
-                break;
-            }
+public Node<Person> getNode(String name) {
+    if (head == null) return null; // Handle empty tree
+
+    Queue<Node<Person>> queue = new LinkedList<>();
+    queue.add(head); // Start from the root node
+
+    while (!queue.isEmpty()) {
+        Node<Person> current = queue.poll();
+        
+        if (current.val.getName().equals(name)) {
+            return current; // Found the node
         }
-        System.out.println("Cannot find node: " + name);
-        return null;
+        
+        queue.addAll(current.next); // Add all children to queue for further searching
     }
+
+    System.out.println("Cannot find node: " + name);
+    return null; // Node not found
+}
+
 
     public void printLineage(Node<Person> node) {
         if (node == null) return;

@@ -9,11 +9,11 @@ public class LineagePopulate {
  *  0: Tribe Origin, 1: Lifespan, 2: Scripture found on character
  */
 
-    private LineageService lineageService;
+    private LineageService israelLineageService;
     
     public LineagePopulate() {
         //Originator of Israel Jacob
-        LineageService israelLineageService = new LineageService();
+        israelLineageService = new LineageService();
         String[] defaultStringDescription = {"Patriarch of Israel", "Lifespan: ", "Most of the stories found in Genesis", "Father of Israel, given new name by God meaning 'to struggle with God'"};
         Person jacobIsrael = new Person("Jacob", defaultStringDescription);
         israelLineageService.addFirst(new Node<>(jacobIsrael));
@@ -71,9 +71,14 @@ public class LineagePopulate {
         israelLineageService.addChild(new Node<>(testSecondSonOfReuben), "Reuben");
         Node<Person> test = israelLineageService.getNode("Reuben");
         israelLineageService.printLineage(test);
+
+        Person testSonOfReuben = new Person("Son of Reuben", defaultStringDescription);
+        israelLineageService.addChild(new Node<>(testSonOfReuben), "Reuben");
+        test = israelLineageService.getNode("Reuben");
+        israelLineageService.printLineage(test);
     }
     public LineageService getLineageService() {
-        return lineageService;
+        return israelLineageService;
     }
     
     
