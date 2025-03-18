@@ -9,7 +9,7 @@ public class LineagePopulate {
  *  0: Tribe Origin, 1: Lifespan, 2: Scripture found on character
  */
 
-    private LineageService israelLineageService;
+    private final LineageService israelLineageService;
     
     public LineagePopulate() {
         //Originator of Israel Jacob
