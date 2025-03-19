@@ -13,6 +13,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+/**
+ * A graphical user interface (GUI) for visualizing and interacting with a lineage tree.
+ * The `LineageViewer` class displays a tree structure of a lineage and provides
+ * functionality to sort and view details of individuals in the lineage.
+ */
 public class LineageViewer extends JFrame {
     private JTree lineageTree;
     private JTextArea infoPanel;
@@ -20,6 +25,11 @@ public class LineageViewer extends JFrame {
     private DefaultMutableTreeNode root;
     private DefaultTreeModel treeModel;
 
+    /**
+     * Constructs a `LineageViewer` instance.
+     *
+     * @param lineageService The {@code LineageService} instance used to manage the lineage data.
+     */
     public LineageViewer(LineageService lineageService) {
         this.lineageService = lineageService;
         setTitle("Lineage Viewer");
@@ -55,6 +65,12 @@ public class LineageViewer extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Builds the root of the lineage tree.
+     *
+     * @return The root {@code DefaultMutableTreeNode} of the lineage tree.
+     *         If no data is available, a placeholder node is returned.
+     */
     private DefaultMutableTreeNode buildTree() {
         Node<Person> rootPerson = lineageService.getNode("Jacob"); // Root of the lineage
         if (rootPerson == null) return new DefaultMutableTreeNode("No Data");
@@ -62,6 +78,12 @@ public class LineageViewer extends JFrame {
         return buildTreeRecursive(rootPerson);
     }
 
+    /**
+     * Recursively builds the lineage tree starting from a given node.
+     *
+     * @param personNode The {@code Node<Person>} representing the current person in the lineage.
+     * @return A {@code DefaultMutableTreeNode} representing the current person and their descendants.
+     */
     private DefaultMutableTreeNode buildTreeRecursive(Node<Person> personNode) {
         DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(personNode.val.getName());
 
@@ -71,6 +93,9 @@ public class LineageViewer extends JFrame {
         return treeNode;
     }
 
+    /**
+     * Updates the information panel with details of the selected person in the tree.
+     */
     private void updateInfoPanel() {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) lineageTree.getLastSelectedPathComponent();
         if (selectedNode == null) return;
@@ -90,6 +115,9 @@ public class LineageViewer extends JFrame {
         infoPanel.setText(sb.toString());
     }
 
+    /**
+     * Sorts the entire lineage tree and refreshes the GUI to reflect the changes.
+     */
     private void sortAndRefresh() {
         Node<Person> rootPerson = lineageService.getNode("Jacob");
         if (rootPerson == null) {
@@ -105,6 +133,11 @@ public class LineageViewer extends JFrame {
         treeModel.reload();
     }
 
+    /**
+     * Recursively sorts all nodes in the lineage tree.
+     *
+     * @param node The {@code Node<Person>} representing the current node to sort.
+     */
     private void sortAllNodes(Node<Person> node) {
         if (node.next.isEmpty()) return;
 
@@ -114,6 +147,12 @@ public class LineageViewer extends JFrame {
         }
     }
 
+    /**
+     * Rebuilds the lineage tree in the GUI after sorting.
+     *
+     * @param treeNode The {@code DefaultMutableTreeNode} representing the current tree node in the GUI.
+     * @param node     The {@code Node<Person>} representing the current node in the lineage.
+     */
     private void rebuildTree(DefaultMutableTreeNode treeNode, Node<Person> node) {
         for (Node<Person> child : node.next) {
             DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child.val.getName());
