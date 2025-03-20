@@ -5,13 +5,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class LineageService implements DoublyLinkedList<Node<Person>> {
+    private ArrayList<Node<Person>> roots;  // Store multiple root nodes
     private int size = 0;
-    private Node<Person> head;
-    private Node<Person> tail;
 
     public LineageService() {
-        head = null;
-        tail = null;
+        roots = new ArrayList<>();
         size = 0;
     }
 
@@ -19,13 +17,8 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
     public void addFirst(Node<Person> data) {
         if (data == null) return;
         
-        if (head != null) {
-            data.next.add(head);
-            head.prev.add(data);
-        }
-        
-        head = data;
-        if (tail == null) tail = head;
+        // Add as a new root node
+        roots.add(data);
         size++;
     }
 
@@ -33,63 +26,46 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
     public void addLast(Node<Person> data) {
         if (data == null) return;
         
-        if (tail != null) {
-            tail.next.add(data);
-            data.prev.add(tail);
+        if (roots.isEmpty()) {
+            roots.add(data);
+        } else {
+            Node<Person> lastRoot = roots.get(roots.size() - 1);
+            lastRoot.next.add(data);
+            data.prev.add(lastRoot);
         }
-
-        tail = data;
-        if (head == null) head = tail;
         size++;
     }
 
     @Override
     public Node<Person> removeFirst() {
-        if (head == null) return null;
+        if (roots.isEmpty()) return null;
         
-        Node<Person> removed = head;
-        if (!head.next.isEmpty()) {
-            head = head.next.get(0); // Move to the first child (if any)
-            head.prev.clear();
-        } else {
-            head = null;
-            tail = null;
-        }
-        
+        Node<Person> removed = roots.remove(0);
         size--;
         return removed;
     }
 
     @Override
     public Node<Person> removeLast() {
-        if (tail == null) return null;
+        if (roots.isEmpty()) return null;
         
-        Node<Person> removed = tail;
-        if (!tail.prev.isEmpty()) {
-            tail = tail.prev.get(0); // Move to first parent (if any)
-            tail.next.clear();
-        } else {
-            head = null;
-            tail = null;
-        }
-        
+        Node<Person> removed = roots.remove(roots.size() - 1);
         size--;
         return removed;
     }
 
     @Override
     public Node<Person> getFirst() {
-        return head;
+        return roots.isEmpty() ? null : roots.get(0);
     }
 
     @Override
     public Node<Person> getLast() {
-        return tail;
+        return roots.isEmpty() ? null : roots.get(roots.size() - 1);
     }
 
     @Override
     public boolean isEmpty() {
-
         return size == 0;
     }
 
@@ -98,51 +74,66 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
         return size;
     }
 
-public void addChild(Node<Person> child, String father) {
-    Node<Person> curr = head;
-    
-    while (curr != null) {
-        if (curr.val.getName().equals(father)) {
-            if (curr.next == null) {
-                curr.next = new ArrayList<>(); // Ensure list exists
-            }
-            curr.next.add(child);
-
-            if (child.prev == null) {
-                child.prev = new ArrayList<>(); // Ensure list exists
-            }
-            child.prev.add(curr);
-
-            System.out.println("Added child: " + child.val.getName() + " to father: " + father);
-            return; // Exit once the father is found
-        }
-        curr = curr.next.get(0); // Move to next node in the list
+    public ArrayList<Node<Person>> getRoots() {
+        return roots;
     }
 
-    System.out.println("addChild() could not find father: " + father + " so unable to add " + child.val.getName());
-}
-
-
-public Node<Person> getNode(String name) {
-    if (head == null) return null; // Handle empty tree
-
-    Queue<Node<Person>> queue = new LinkedList<>();
-    queue.add(head); // Start from the root node
-
-    while (!queue.isEmpty()) {
-        Node<Person> current = queue.poll();
-        
-        if (current.val.getName().equals(name)) {
-            return current; // Found the node
+    public void addChild(Node<Person> child, String parentName) {
+        if (child == null || parentName == null) {
+            return;
         }
-        
-        queue.addAll(current.next); // Add all children to queue for further searching
+
+        // Search through all root trees for the parent
+        for (Node<Person> root : roots) {
+            Queue<Node<Person>> queue = new LinkedList<>();
+            queue.add(root);
+
+            while (!queue.isEmpty()) {
+                Node<Person> current = queue.poll();
+                
+                if (current.val.getName().equals(parentName)) {
+                    // Initialize lists if null
+                    if (current.next == null) {
+                        current.next = new ArrayList<>();
+                    }
+                    if (child.prev == null) {
+                        child.prev = new ArrayList<>();
+                    }
+
+                    // Add the parent-child relationship
+                    current.next.add(child);
+                    child.prev.add(current);
+                    size++;
+                    return;
+                }
+                
+                if (current.next != null) {
+                    queue.addAll(current.next);
+                }
+            }
+        }
     }
 
-    System.out.println("Cannot find node: " + name);
-    return null; // Node not found
-}
+    public Node<Person> getNode(String name) {
+        // Search through all root trees
+        for (Node<Person> root : roots) {
+            Queue<Node<Person>> queue = new LinkedList<>();
+            queue.add(root);
 
+            while (!queue.isEmpty()) {
+                Node<Person> current = queue.poll();
+                
+                if (current.val.getName().equals(name)) {
+                    return current;
+                }
+                
+                if (current.next != null) {
+                    queue.addAll(current.next);
+                }
+            }
+        }
+        return null;
+    }
 
     public void printLineage(Node<Person> node) {
         if (node == null) return;
