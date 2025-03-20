@@ -15,6 +15,9 @@ public class App
         
         SwingUtilities.invokeLater(() -> {
             LineageViewer viewer = new LineageViewer(lineageService);
+            viewer.addRootNode("Adah");
+            viewer.addRootNode("Basemath");
+            viewer.addRootNode("Isaac");
             viewer.setVisible(true);
         });
     }

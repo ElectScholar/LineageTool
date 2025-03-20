@@ -2,106 +2,154 @@ package com.lineagetool;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeSelectionModel;
+
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.model.mxGeometry;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.view.mxGraph;  // Add this import
+
+// ...rest of the file remains the same...
 
 public class LineageViewer extends JFrame {
-    private JTree lineageTree;
+    private mxGraph graph;
+    private Object parent;
     private JTextArea infoPanel;
     private LineageService lineageService;
-    private DefaultMutableTreeNode root;
-    private DefaultTreeModel treeModel;
+    private mxGraphComponent graphComponent;
+    private List<String> rootNodes = new ArrayList<>();
+    private Map<String, Object> vertexMap = new HashMap<>();  // Add this as a class field
 
     public LineageViewer(LineageService lineageService) {
         this.lineageService = lineageService;
         setTitle("Lineage Viewer");
-        setSize(600, 400);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Build tree model
-        root = buildTree();
-        treeModel = new DefaultTreeModel(root);
-        lineageTree = new JTree(treeModel);
-        lineageTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        lineageTree.addTreeSelectionListener(e -> updateInfoPanel());
-
+        // Create graph
+        graph = new mxGraph();
+        parent = graph.getDefaultParent();
+        graphComponent = new mxGraphComponent(graph);
+        
+        // Enable moving of vertices
+        graph.setCellsMovable(true);
+        graph.setCellsResizable(false);
+        graph.setAllowDanglingEdges(false);
+        
         // Info panel
         infoPanel = new JTextArea();
         infoPanel.setEditable(false);
         infoPanel.setLineWrap(true);
         infoPanel.setWrapStyleWord(true);
 
-        // Button to sort entire tree
-        JButton sortButton = new JButton("Sort Entire Tree");
-        sortButton.addActionListener(e -> sortAndRefresh());
-
+        // Default root nodes
+        rootNodes.add("Jacob");
+        
+        // Build tree
+        buildGraph();
+        
         // Layout
-        JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.add(new JScrollPane(lineageTree), BorderLayout.CENTER);
-        leftPanel.add(sortButton, BorderLayout.SOUTH); // Add button below tree
-
-        add(leftPanel, BorderLayout.WEST);
-        add(new JScrollPane(infoPanel), BorderLayout.CENTER);
-
-        setVisible(true);
-    }
-
-    private DefaultMutableTreeNode buildTree() {
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Lineage Trees");
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+            graphComponent, new JScrollPane(infoPanel));
+        splitPane.setDividerLocation(600);
+        add(splitPane, BorderLayout.CENTER);
         
-        // Get all root nodes from the lineage service
-        ArrayList<Node<Person>> roots = lineageService.getRoots();
-        if (roots.isEmpty()) {
-            return new DefaultMutableTreeNode("No Data");
-        }
-
-        // Add each root and its subtree
-        for (Node<Person> root : roots) {
-            rootNode.add(buildTreeRecursive(root));
-        }
-
-        return rootNode;
-    }
-
-    private DefaultMutableTreeNode buildTreeRecursive(Node<Person> personNode) {
-        if (personNode == null || personNode.val == null) {
-            return null;
-        }
-
-        DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(personNode.val.getName());
-        
-        if (personNode.next != null) {
-            for (Node<Person> child : personNode.next) {
-                DefaultMutableTreeNode childNode = buildTreeRecursive(child);
-                if (childNode != null) {
-                    treeNode.add(childNode);
+        // Add mouse listener for selection
+        graphComponent.getGraphControl().addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent e) {
+                Object cell = graphComponent.getCellAt(e.getX(), e.getY());
+                if (cell != null) {
+                    String personName = graph.getLabel(cell);
+                    updateInfoPanel(personName);
                 }
             }
-        }
-        return treeNode;
+        });
     }
 
-    private void updateInfoPanel() {
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) lineageTree.getLastSelectedPathComponent();
-        if (selectedNode == null) return;
+    private void buildGraph() {
+        graph.getModel().beginUpdate();
+        try {
+            // Clear existing graph and vertex map
+            graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+            vertexMap.clear();
+            
+            // Build trees for each root node
+            double xOffset = 0;
+            for (String rootName : rootNodes) {
+                Node<Person> rootPerson = lineageService.getNode(rootName);
+                if (rootPerson != null) {
+                    Object vertex = buildGraphRecursive(rootPerson, null);
+                    // Position root nodes horizontally
+                    graph.getModel().setGeometry(vertex, 
+                        new mxGeometry(xOffset, 0, 100, 40));
+                    xOffset += 200; // Space between root nodes
+                }
+            }
+            
+            // Apply hierarchical layout
+            mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+            layout.setInterRankCellSpacing(50);
+            layout.execute(parent);
+        } finally {
+            graph.getModel().endUpdate();
+        }
+    }
 
-        String personName = selectedNode.getUserObject().toString();
-        Node<Person> personNode = lineageService.getNode(personName);
-        if (personNode == null) {
+    private Object buildGraphRecursive(Node<Person> personNode, Object parentVertex) {
+        String personName = personNode.val.getName();
+        Object vertex;
+        
+        // Check if we already created this vertex
+        if (vertexMap.containsKey(personName)) {
+            vertex = vertexMap.get(personName);
+            // Add edge if there's a parent and we haven't connected them yet
+            if (parentVertex != null) {
+                Object[] edges = graph.getEdgesBetween(parentVertex, vertex);
+                if (edges.length == 0) {
+                    graph.insertEdge(parent, null, "", parentVertex, vertex,
+                        "strokeColor=#666666");
+                }
+            }
+        } else {
+            // Create new vertex
+            vertex = graph.insertVertex(parent, null, personName,
+                0, 0, 100, 40, "rounded=1;strokeColor=#666666;fillColor=#f5f5f5");
+            vertexMap.put(personName, vertex);
+            
+            if (parentVertex != null) {
+                graph.insertEdge(parent, null, "", parentVertex, vertex,
+                    "strokeColor=#666666");
+            }
+
+            // Process children only for new vertices to avoid cycles
+            for (Node<Person> child : personNode.next) {
+                buildGraphRecursive(child, vertex);
+            }
+        }
+        
+        return vertex;
+    }
+
+    private void updateInfoPanel(String personName) {
+        if (personName == null) {
             infoPanel.setText("No details available.");
             return;
         }
-
+        
+        Node<Person> personNode = lineageService.getNode(personName);
+        if (personNode == null) {
+            infoPanel.setText("No details available for: " + personName);
+            return;
+        }
+        
         Person person = personNode.val;
         StringBuilder sb = new StringBuilder("Name: " + person.getName() + "\n\n");
         for (String detail : person.getDetails()) {
@@ -110,35 +158,10 @@ public class LineageViewer extends JFrame {
         infoPanel.setText(sb.toString());
     }
 
-    private void sortAndRefresh() {
-        Node<Person> rootPerson = lineageService.getNode("Jacob");
-        if (rootPerson == null) {
-            JOptionPane.showMessageDialog(this, "Root node not found.");
-            return;
-        }
-
-        sortAllNodes(rootPerson);
-
-        // Refresh UI
-        root.removeAllChildren();
-        rebuildTree(root, rootPerson);
-        treeModel.reload();
-    }
-
-    private void sortAllNodes(Node<Person> node) {
-        if (node.next.isEmpty()) return;
-
-        node.next = Sorting.sortChildren(node.next); // Sort children
-        for (Node<Person> child : node.next) {
-            sortAllNodes(child); // Recursively sort each subtree
-        }
-    }
-
-    private void rebuildTree(DefaultMutableTreeNode treeNode, Node<Person> node) {
-        for (Node<Person> child : node.next) {
-            DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child.val.getName());
-            treeNode.add(childNode);
-            rebuildTree(childNode, child);
+    public void addRootNode(String personName) {
+        if (!rootNodes.contains(personName) && lineageService.getNode(personName) != null) {
+            rootNodes.add(personName);
+            buildGraph();
         }
     }
 }
