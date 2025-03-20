@@ -10,13 +10,61 @@ public class LineagePopulate {
     public LineagePopulate() {
         israelLineageService = new LineageService();
 
-        // Add Jacob (Israel) as the root
+        // Add Isaac  as the root
+        addPersonToLineage("Isaac", new String[]{
+            "Patriarch of Israel",
+            "Lifespan: ",
+            "Most of the stories found in Genesis",
+            "Father of Israel, given new name by God meaning 'to struggle with God'"
+        }, (String[])null);
+
+        // Adah wife of Esau
+        addPersonToLineage("Adah", new String[]{
+            "Wife of Esau",
+            "Lifespan: ",
+            "Most of the stories found in Genesis",
+            "Mother of Eliphaz, Canaanite wife of Esau"
+        }, (String[])null);
+
+        // Add Basemath wife of Esau
+        addPersonToLineage("Basemath", new String[]{
+            "Wife of Esau",
+            "Lifespan: ",
+            "Most of the stories found in Genesis",
+            "Mother of Reuel, daughter of Elon the Hittite"
+        }, (String[])null);
+
+        // Add Esau (Edomites)
+        addPersonToLineage("Esau", new String[]{
+            "Father of Edomites",
+            "Lifespan: ",
+            "Most of the stories found in Genesis",
+            "Father of Edomites, gave away birthright to Jacob for a bowl of soup"
+        }, "Isaac");
+
+        // Add Esau's children
+        addPersonToLineage("Eliphaz", new String[]{
+            "Father of Temanites",
+            "Lifespan: ",
+            "Most of the stories found in Genesis",
+            "Father of Temanites, son of Esau"
+        }, "Esau", "Adah");
+
+        //Add Reuel (Father of Reuelites)
+        addPersonToLineage("Reuel", new String[]{
+            "Father of Reuelites",
+            "Lifespan: ",
+            "Most of the stories found in Genesis",
+            "Father of Reuelites, son of Esau"
+        }, "Esau", "Basemath");
+
+        // Add Jacob (Israel Patriarch) 
         addPersonToLineage("Jacob", new String[]{
             "Patriarch of Israel",
             "Lifespan: ",
             "Most of the stories found in Genesis",
             "Father of Israel, given new name by God meaning 'to struggle with God'"
-        }, null);
+        }, "Isaac");
 
         // Add Jacob's children
         addPersonToLineage("Reuben", new String[]{
@@ -112,19 +160,25 @@ public class LineagePopulate {
     }
 
     /**
-     * Helper method to add a person to the lineage.
+     * Helper method to add a person to the lineage with multiple possible parents.
      *
-     * @param name        The name of the person.
-     * @param description The description array for the person.
-     * @param parentName  The name of the parent (null if this is the root).
+     * @param name         The name of the person.
+     * @param description  The description array for the person.
+     * @param parentNames  Array of parent names (null or empty array if this is a root).
      */
-    private void addPersonToLineage(String name, String[] description, String parentName) {
+    private void addPersonToLineage(String name, String[] description, String... parentNames) {
         Person person = new Person(name, description);
         Node<Person> node = new Node<>(person);
-        if (parentName == null) {
+        
+        if (parentNames == null || parentNames.length == 0) {
             israelLineageService.addFirst(node);
         } else {
-            israelLineageService.addChild(node, parentName);
+            // Add connection to each parent
+            for (String parentName : parentNames) {
+                if (parentName != null) {
+                    israelLineageService.addChild(node, parentName);
+                }
+            }
         }
     }
 

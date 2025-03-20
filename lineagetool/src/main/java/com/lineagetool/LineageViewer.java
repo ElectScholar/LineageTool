@@ -1,6 +1,7 @@
 package com.lineagetool;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -56,17 +57,36 @@ public class LineageViewer extends JFrame {
     }
 
     private DefaultMutableTreeNode buildTree() {
-        Node<Person> rootPerson = lineageService.getNode("Jacob"); // Root of the lineage
-        if (rootPerson == null) return new DefaultMutableTreeNode("No Data");
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Lineage Trees");
+        
+        // Get all root nodes from the lineage service
+        ArrayList<Node<Person>> roots = lineageService.getRoots();
+        if (roots.isEmpty()) {
+            return new DefaultMutableTreeNode("No Data");
+        }
 
-        return buildTreeRecursive(rootPerson);
+        // Add each root and its subtree
+        for (Node<Person> root : roots) {
+            rootNode.add(buildTreeRecursive(root));
+        }
+
+        return rootNode;
     }
 
     private DefaultMutableTreeNode buildTreeRecursive(Node<Person> personNode) {
-        DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(personNode.val.getName());
+        if (personNode == null || personNode.val == null) {
+            return null;
+        }
 
-        for (Node<Person> child : personNode.next) {
-            treeNode.add(buildTreeRecursive(child));
+        DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(personNode.val.getName());
+        
+        if (personNode.next != null) {
+            for (Node<Person> child : personNode.next) {
+                DefaultMutableTreeNode childNode = buildTreeRecursive(child);
+                if (childNode != null) {
+                    treeNode.add(childNode);
+                }
+            }
         }
         return treeNode;
     }
