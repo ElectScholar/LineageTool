@@ -34,6 +34,13 @@ public class LineagePopulate {
             "Mother of Reuel, daughter of Elon the Hittite"
         }, (String[])null);
 
+        // Ololibamah wife of Esau
+        addPersonToLineage("Oholibamah", new String[]{
+            "Wife of Esau",
+            "Lifespan: ",
+            "Genesis 36:2-3",
+            "Mother of Jeush, Jalam, Korah. Daughter of Anah daughter of Zibeon the Hivite"
+        }, (String[])null);
         // Add Esau (Edomites)
         addPersonToLineage("Esau", new String[]{
             "Father of Edomites",
@@ -58,6 +65,30 @@ public class LineagePopulate {
             "Father of Reuelites, son of Esau"
         }, "Esau", "Basemath");
 
+        // Add Jeush (Father of Jeushites)
+        addPersonToLineage("Jeush", new String[]{
+            "Father of Jeushites",
+            "Lifespan: ",
+            "Genesis 36:5",
+            "Father of Jeushites, son of Esa and Obolibamah"
+        }, "Esau", "Oholibamah");
+
+        // Add Jalam (Father of Jalmites)
+        addPersonToLineage("Jalam", new String[]{
+            "Father of Jalmites",
+            "Lifespan: ",
+            "Genesis 36:5",
+            "Father of Jalmites, son of Esa and Obolibamah"
+        }, "Esau", "Oholibamah");
+
+        // Add Korah (Father of Korahites)
+        addPersonToLineage("Korah", new String[]{
+            "Father of Korahites",
+            "Lifespan: ",
+            "Genesis 36:5",
+            "Father of Korahites, son of Esa and Obolibamah"
+        }, "Esau", "Oholibamah");
+        
         // Add Jacob (Israel Patriarch) 
         addPersonToLineage("Jacob", new String[]{
             "Patriarch of Israel",
