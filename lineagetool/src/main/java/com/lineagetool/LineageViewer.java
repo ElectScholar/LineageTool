@@ -37,6 +37,9 @@ public class LineageViewer extends JFrame {
     private static final String COLLAPSE_ICON = "-";
     private static final double SCROLL_SPEED = 5.0; // Adjust this value to change scroll speed
     private static final double ZOOM_FACTOR = 1.2;  // Adjust for zoom sensitivity
+    private static final String HIGHLIGHT_STYLE = "rounded=1;strokeColor=#FF0000;strokeWidth=3;fillColor=#f5f5f5";
+    private static final String HIGHLIGHT_EDGE_STYLE = "strokeColor=#FF0000;strokeWidth=2";
+    private List<Object> currentlyHighlighted = new ArrayList<>();
 
     public LineageViewer(LineageService lineageService) {
         this.lineageService = lineageService;
@@ -87,6 +90,7 @@ public class LineageViewer extends JFrame {
                     } else if (e.getClickCount() == 1) {  // Single click for info
                         String personName = graph.getLabel(cell).replace(EXPAND_ICON, "").replace(COLLAPSE_ICON, "").trim();
                         updateInfoPanel(personName);
+                        highlightPathToRoot(clickedCell);
                     }
                 }
             }
@@ -275,6 +279,57 @@ public class LineageViewer extends JFrame {
         if (!rootNodes.contains(personName) && lineageService.getNode(personName) != null) {
             rootNodes.add(personName);
             buildGraph();
+        }
+    }
+
+    private void highlightPathToRoot(mxCell cell) {
+        // Clear previous highlighting
+        clearHighlights();
+        
+        graph.getModel().beginUpdate();
+        try {
+            mxCell current = cell;
+            while (current != null && current.isVertex()) {
+                // Highlight the current vertex
+                String oldStyle = current.getStyle();
+                current.setStyle(HIGHLIGHT_STYLE);
+                currentlyHighlighted.add(current);
+                
+                // Find parent edge and vertex
+                Object[] incomingEdges = graph.getIncomingEdges(current);
+                if (incomingEdges.length > 0) {
+                    mxCell edge = (mxCell) incomingEdges[0];
+                    edge.setStyle(HIGHLIGHT_EDGE_STYLE);
+                    currentlyHighlighted.add(edge);
+                    current = (mxCell) edge.getSource();
+                } else {
+                    current = null;
+                }
+            }
+            graph.refresh();
+        } finally {
+            graph.getModel().endUpdate();
+        }
+    }
+
+    private void clearHighlights() {
+        graph.getModel().beginUpdate();
+        try {
+            for (Object cell : currentlyHighlighted) {
+                if (cell instanceof mxCell) {
+                    mxCell mxCell = (mxCell) cell;
+                    if (mxCell.isVertex()) {
+                        boolean isCollapsed = graph.isCellCollapsed(mxCell);
+                        mxCell.setStyle(isCollapsed ? STYLE_COLLAPSED : STYLE_EXPANDED);
+                    } else {
+                        mxCell.setStyle("strokeColor=#666666");
+                    }
+                }
+            }
+            currentlyHighlighted.clear();
+            graph.refresh();
+        } finally {
+            graph.getModel().endUpdate();
         }
     }
 }
