@@ -1,6 +1,10 @@
 package com.lineagetool;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,13 +14,13 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;  // Add this import
-
-// ...rest of the file remains the same...
+import com.mxgraph.view.mxGraph;
 
 public class LineageViewer extends JFrame {
     private mxGraph graph;
@@ -25,7 +29,14 @@ public class LineageViewer extends JFrame {
     private LineageService lineageService;
     private mxGraphComponent graphComponent;
     private List<String> rootNodes = new ArrayList<>();
-    private Map<String, Object> vertexMap = new HashMap<>();  // Add this as a class field
+    private Map<String, Object> vertexMap = new HashMap<>();
+
+    private static final String STYLE_EXPANDED = "rounded=1;strokeColor=#666666;fillColor=#f5f5f5";
+    private static final String STYLE_COLLAPSED = "rounded=1;strokeColor=#666666;fillColor=#e0e0e0";
+    private static final String EXPAND_ICON = "+";
+    private static final String COLLAPSE_ICON = "-";
+    private static final double SCROLL_SPEED = 5.0; // Adjust this value to change scroll speed
+    private static final double ZOOM_FACTOR = 1.2;  // Adjust for zoom sensitivity
 
     public LineageViewer(LineageService lineageService) {
         this.lineageService = lineageService;
@@ -43,6 +54,8 @@ public class LineageViewer extends JFrame {
         graph.setCellsMovable(true);
         graph.setCellsResizable(false);
         graph.setAllowDanglingEdges(false);
+        graph.setCellsEditable(false);
+        graph.setAutoSizeCells(true);
         
         // Info panel
         infoPanel = new JTextArea();
@@ -63,15 +76,54 @@ public class LineageViewer extends JFrame {
         add(splitPane, BorderLayout.CENTER);
         
         // Add mouse listener for selection
-        graphComponent.getGraphControl().addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent e) {
+        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
-                if (cell != null) {
-                    String personName = graph.getLabel(cell);
-                    updateInfoPanel(personName);
+                if (cell != null && cell instanceof mxCell) {
+                    mxCell clickedCell = (mxCell) cell;
+                    if (e.getClickCount() == 2) {  // Double click to collapse/expand
+                        toggleCollapse(clickedCell);
+                    } else if (e.getClickCount() == 1) {  // Single click for info
+                        String personName = graph.getLabel(cell).replace(EXPAND_ICON, "").replace(COLLAPSE_ICON, "").trim();
+                        updateInfoPanel(personName);
+                    }
                 }
             }
         });
+
+        // Add scroll and zoom control
+        graphComponent.getGraphControl().addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if (e.isControlDown()) {
+                    // Zoom when Ctrl is pressed
+                    if (e.getWheelRotation() < 0) {
+                        graphComponent.zoomIn();
+                    } else {
+                        graphComponent.zoomOut();
+                    }
+                } else {
+                    // Enhanced scrolling without Ctrl
+                    int scrollAmount = (int)(e.getUnitsToScroll() * SCROLL_SPEED);
+                    if (e.isShiftDown()) {
+                        // Horizontal scroll when Shift is pressed
+                        graphComponent.getHorizontalScrollBar().setValue(
+                            graphComponent.getHorizontalScrollBar().getValue() + 
+                            scrollAmount);
+                    } else {
+                        // Vertical scroll
+                        graphComponent.getVerticalScrollBar().setValue(
+                            graphComponent.getVerticalScrollBar().getValue() + 
+                            scrollAmount);
+                    }
+                }
+                e.consume();
+            }
+        });
+        
+        // Enable scroll optimization
+        graphComponent.setTripleBuffered(true);
     }
 
     private void buildGraph() {
@@ -106,11 +158,9 @@ public class LineageViewer extends JFrame {
     private Object buildGraphRecursive(Node<Person> personNode, Object parentVertex) {
         String personName = personNode.val.getName();
         Object vertex;
-        
-        // Check if we already created this vertex
+
         if (vertexMap.containsKey(personName)) {
             vertex = vertexMap.get(personName);
-            // Add edge if there's a parent and we haven't connected them yet
             if (parentVertex != null) {
                 Object[] edges = graph.getEdgesBetween(parentVertex, vertex);
                 if (edges.length == 0) {
@@ -119,9 +169,14 @@ public class LineageViewer extends JFrame {
                 }
             }
         } else {
-            // Create new vertex
-            vertex = graph.insertVertex(parent, null, personName,
-                0, 0, 100, 40, "rounded=1;strokeColor=#666666;fillColor=#f5f5f5");
+            // Add collapse/expand indicator to vertices with children
+            String label = personName;
+            if (!personNode.next.isEmpty()) {
+                label += " " + COLLAPSE_ICON;
+            }
+            
+            vertex = graph.insertVertex(parent, null, label,
+                0, 0, 100, 40, STYLE_EXPANDED);
             vertexMap.put(personName, vertex);
             
             if (parentVertex != null) {
@@ -129,7 +184,7 @@ public class LineageViewer extends JFrame {
                     "strokeColor=#666666");
             }
 
-            // Process children only for new vertices to avoid cycles
+            // Create child vertices
             for (Node<Person> child : personNode.next) {
                 buildGraphRecursive(child, vertex);
             }
@@ -138,7 +193,65 @@ public class LineageViewer extends JFrame {
         return vertex;
     }
 
+    private void toggleCollapse(mxCell cell) {
+        graph.getModel().beginUpdate();
+        try {
+            boolean collapsed = !graph.isCellCollapsed(cell);
+            graph.getModel().setCollapsed(cell, collapsed);
+            
+            // Get all connected edges and child vertices
+            List<Object> descendants = new ArrayList<>();
+            getDescendants(cell, descendants);
+            
+            // Toggle visibility
+            for (Object descendant : descendants) {
+                if (descendant instanceof mxCell) {
+                    mxCell mxDescendant = (mxCell) descendant;
+                    if (mxDescendant.isVertex()) {
+                        graph.getModel().setVisible(mxDescendant, !collapsed);
+                        // Also hide edges connected to this vertex
+                        for (Object edge : graph.getEdges(mxDescendant)) {
+                            mxCell edgeCell = (mxCell) edge;
+                            mxCell source = (mxCell) edgeCell.getSource();
+                            if (source == cell || !descendants.contains(source)) {
+                                graph.getModel().setVisible(edge, !collapsed);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Update the cell style and label
+            String label = cell.getValue().toString();
+            label = label.replace(EXPAND_ICON, "").replace(COLLAPSE_ICON, "").trim();
+            cell.setValue(label + " " + (collapsed ? EXPAND_ICON : COLLAPSE_ICON));
+            cell.setStyle(collapsed ? STYLE_COLLAPSED : STYLE_EXPANDED);
+            
+            // Refresh layout
+            mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+            layout.setInterRankCellSpacing(50);
+            layout.execute(parent);
+            
+            graph.refresh();
+        } finally {
+            graph.getModel().endUpdate();
+        }
+    }
+
+    private void getDescendants(mxCell cell, List<Object> descendants) {
+        Object[] outgoing = graph.getOutgoingEdges(cell);
+        for (Object edge : outgoing) {
+            mxCell target = (mxCell) ((mxCell) edge).getTarget();
+            if (!descendants.contains(target)) {
+                descendants.add(target);
+                descendants.add(edge);
+                getDescendants(target, descendants);
+            }
+        }
+    }
+
     private void updateInfoPanel(String personName) {
+        personName = personName.replace(EXPAND_ICON, "").replace(COLLAPSE_ICON, "").trim();
         if (personName == null) {
             infoPanel.setText("No details available.");
             return;
