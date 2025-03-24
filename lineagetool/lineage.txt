@@ -1,0 +1,100 @@
+[ROOT] Isaac|Patriarch of Israel||Most of the stories found in Genesis|Father of Israel, given new name by God meaning 'to struggle with God'
+[ROOT] Adah|Wife of Esau||Most of the stories found in Genesis|Mother of Eliphaz, Canaanite wife of Esau
+[ROOT] Basemath|Wife of Esau||Most of the stories found in Genesis|Mother of Reuel, daughter of Elon the Hittite
+[ROOT] Oholibamah|Wife of Esau||Genesis 36:2-3|Mother of Jeush, Jalam, Korah. Daughter of Anah daughter of Zibeon the Hivite
+[ROOT] Timna|Concubine of Eliphaz||Genesis 36:12|Concubine of Eliphaz, sister of Lotan
+[ROOT] Leah|Wife of Jacob||Most of the stories found in Genesis|Mother of Reuben, Simeon, Levi, Judah, Issachar, Zebulun, Dinah
+[ROOT] Bilhah|Concubine of Jacob||Most of the stories found in Genesis|Mother of Dan, Naphtali
+[ROOT] Zilpah|Concubine of Jacob||Most of the stories found in Genesis|Mother of Gad, Asher
+[ROOT] Rachel|Wife of Jacob||Most of the stories found in Genesis|Mother of Joseph, Benjamin
+[ROOT] Shua's Daughter|Wife of Judah||Genesis 38:2|Mother of Er, Onan, Shelah
+[ROOT] Tamar|Wife of Er||Genesis 38:6-30|Mother of Perez, Zerah, daughter-in-law of Judah. Tamar was married to Er and later married again to his brother Onan after Er died (this is similar to a practice called 'redemption' explained in Leviticus). For the full story, read Genesis 38.
+[ROOT] Asenath|Wife of Joseph||Genesis 41:45|Mother of Manasseh, Ephraim, daughter of Potiphera priest of On
+Esau|Father of Edomites||Genesis 25-36|Father of Edomites, gave away birthright to Jacob for a bowl of soup|Isaac
+Eliphaz|Father of Temanites||Genesis 36:4-12|Father of Temanites, son of Esau|Esau,Adah
+Amalek|Father of Amalekites||Genesis 36:12|Father of Amalekites, son of Eliphaz|Eliphaz,Timna
+Teman|Father of Temanites||Genesis 36:11|Father of Temanites, son of Eliphaz|Eliphaz
+Omar|Father of Omarites||Genesis 36:11|Father of Omarites, son of Eliphaz|Eliphaz
+Zepho|Father of Zephoites||Genesis 36:11|Father of Zephoites, son of Eliphaz|Eliphaz
+Gatam|Father of Gatamites||Genesis 36:11|Father of Gatamites, son of Eliphaz|Eliphaz
+Kenaz|Father of Kenazites||Genesis 36:11|Father of Kenazites, son of Eliphaz|Eliphaz
+Reuel|Father of Reuelites||Most of the stories found in Genesis|Father of Reuelites, son of Esau|Esau,Basemath
+Nahath|Father of Nahathites||Genesis 36:13|Father of Nahathites, son of Reuel|Reuel
+Zerah|Father of Zerahites||Genesis 36:13|Father of Zerahites, son of Reuel|Reuel
+Shammah|Father of Shammahites||Genesis 36:13|Father of Shammahites, son of Reuel|Reuel
+Mizzah|Father of Mizzahites||Genesis 36:13|Father of Mizzahites, son of Reuel|Reuel
+Jeush|Father of Jeushites||Genesis 36:5|Father of Jeushites, son of Esau and Oholibamah|Esau,Oholibamah
+Jalam|Father of Jalmites||Genesis 36:5|Father of Jalmites, son of Esau and Oholibamah|Esau,Oholibamah
+Korah|Father of Korahites||Genesis 36:5|Father of Korahites, son of Esau and Oholibamah|Esau,Oholibamah
+Jacob|Patriarch of Israel||Genesis 25-50|Father of Israel, given new name by God meaning 'to struggle with God'|Isaac
+Reuben|Patriarch of Reuben Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel eldest son of 12|Jacob,Leah
+Hanoch|Father of Hanochites||Genesis 46:9|Father of Hanochites, son of Reuben|Reuben
+Pallu|Father of Palluites||Genesis 46:9|Father of Palluites, son of Reuben|Reuben
+Hezron|Father of Hezronites||Genesis 46:9|Father of Hezronites, son of Reuben|Reuben
+Carmi|Father of Carmites||Genesis 46:9|Father of Carmites, son of Reuben|Reuben
+Simeon|Patriarch of Simeon Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel second born son of 12|Jacob,Leah
+Jemuel|Father of Jemuelites||Genesis 46:10|Father of Jemuelites, son of Simeon|Simeon
+Jamin|Father of Jaminites||Genesis 46:10|Father of Jaminites, son of Simeon|Simeon
+Ohad|Father of Ohadites||Genesis 46:10|Father of Ohadites, son of Simeon|Simeon
+Jachin|Father of Jachinites||Genesis 46:10|Father of Jachinites, son of Simeon|Simeon
+Zohar|Father of Zoharites||Genesis 46:10|Father of Zoharites, son of Simeon|Simeon
+Shaul|Father of Shaulites||Genesis 46:10|Father of Shaulites, son of Simeon (Seems to be a note about Shaul possibly not having same mother as siblings see Genesis 46:10)|Simeon
+Levi|Patriarch of Levi Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel third born son of 12|Jacob,Leah
+Gershon|Father of Gershonites||Genesis 46:11|Father of Gershonites, son of Levi|Levi
+Kohath|Father of Kohathites||Genesis 46:11|Father of Kohathites, son of Levi|Levi
+Merari|Father of Merarites||Genesis 46:11|Father of Merarites, son of Levi|Levi
+Judah|Patriarch of Judah Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob|Jacob,Leah
+Er|Father of Erathites||Genesis 38:3|Father of Erathites, son of Judah and Shua|Judah,Shua's Daughter
+Onan|Father of Onanites||Genesis 38:4|Father of Onanites, son of Judah and Shua|Judah,Shua's Daughter
+Shelah|Father of Shelanites||Genesis 38:5|Father of Shelanites, son of Judah and Shua|Judah,Shua's Daughter
+Perez|Father of Perezites||Genesis 38:29|Father of Perezites, son of Judah and Tamar, Twin of Zerah, Line of Jesus|Judah,Tamar
+Hezron|Perezite||Genesis 46:12|son of Perez|Perez
+Hamul|Perezite||Genesis 46:12|son of Perez|Perez
+Zerah|Father of Zerahites||Genesis 38:30|Father of Zerahites, son of Judah and Tamar, Twin of Perez|Judah,Tamar
+Dan|Patriarch of Dan Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 4th born son of 12 given to him by Bilhah servant of Rachel|Jacob,Bilhah
+Hushim|Danite||Genesis 46:23|son of Dan|Dan
+Naphtali|Patriarch of Naphtali Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 5th born son of 12 second given by Bilhah servant of Rachel|Jacob
+Jahzeel|Naphtalite||Genesis 46:24|son of Naphtali|Naphtali
+Guni|Naphtalite||Genesis 46:24|son of Naphtali|Naphtali
+Jezer|Naphtalite||Genesis 46:24|son of Naphtali|Naphtali
+Shillem|Naphtalite||Genesis 46:24|son of Naphtali|Naphtali
+Gad|Patriarch of Gad Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 6th born son of 12 given by Zilpah servant of Leah|Jacob
+Ziphion|Gadite||Genesis 46:16|son of Gad|Gad
+Haggi|Gadite||Genesis 46:16|son of Gad|Gad
+Shuni|Gadite||Genesis 46:16|son of Gad|Gad
+Ezbon|Gadite||Genesis 46:16|son of Gad|Gad
+Eri|Gadite||Genesis 46:16|son of Gad|Gad
+Arodi|Gadite||Genesis 46:16|son of Gad|Gad
+Areli|Gadite||Genesis 46:16|son of Gad|Gad
+Asher|Patriarch of Asher Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 7th born son of 12 second given by Zilpah servant of Leah|Jacob
+Imnah|Asherite||Genesis 46:17|son of Asher|Asher
+Ishvah|Asherite||Genesis 46:17|son of Asher|Asher
+Ishvi|Asherite||Genesis 46:17|son of Asher|Asher
+Beriah|Asherite||Genesis 46:17|son of Asher|Asher
+Heber|Asherite||Genesis 46:17|son of Beriah|Beriah
+Malchiel|Asherite||Genesis 46:17|son of Beriah|Beriah
+Serah|Asherite||Genesis 46:17|daughter of Asher|Asher
+Issachar|Patriarch of Issachar Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 8th born son of 12|Jacob
+Tola|Issacharite||Genesis 46:13|son of Issachar|Issachar
+Puvah|Issacharite||Genesis 46:13|son of Issachar|Issachar
+Yob|Issacharite||Genesis 46:13|son of Issachar|Issachar
+Shimron|Issacharite||Genesis 46:13|son of Issachar|Issachar
+Zebulun|Patriarch of Zebulun Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 9th born son of 12|Jacob
+Sered|Zebulunite||Genesis 46:14|son of Zebulun|Zebulun
+Elon|Zebulunite||Genesis 46:14|son of Zebulun|Zebulun
+Jahleel|Zebulunite||Genesis 46:14|son of Zebulun|Zebulun
+Dinah|Israelite (No Tribe)||Genesis 29-50|Most of stories found in Genesis, daughter of Jacob/Israel|Jacob
+Joseph|Israelite (No Tribe)|110|Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 10th born son of 12|Jacob
+Manasseh|Patriarch of Manasseh Tribe||Genesis 41:51|Most of stories found in Genesis, son of Joseph|Joseph,Asenath
+Ephraim|Patriarch of Ephraim Tribe||Genesis 41:52|Most of stories found in Genesis, son of Joseph|Joseph,Asenath
+Benjamin|Patriarch of Benjamin Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 11th born son of 12|Jacob
+Bela|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Becher|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Ashbel|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Gera|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Naaman|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Ehi|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Rosh|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Muppim|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Huppim|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Ard|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
