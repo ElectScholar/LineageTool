@@ -1,63 +1,83 @@
 # LineageTool
 
 ## Overview
-LineageTool is a Java-based application that models and manages family lineages using a **doubly linked list**. It allows adding and retrieving individuals while maintaining their **parent-child relationships**.
+LineageTool is a Java-based genealogy visualization application that helps users explore and understand family trees through an interactive graphical interface.
 
 ## Features
-- **Doubly Linked List Implementation**: Uses a custom linked list to track lineage.
-- **Add Individuals**: Add new family members dynamically.
-- **Parent-Child Relationships**: Link individuals with parents and children.
-- **Retrieve and Print Lineage**: Fetch and display lineage information.
+- **Interactive Graph Visualization**: Drag and arrange family nodes freely
+- **Collapsible Nodes**: Double-click to collapse/expand family branches
+- **Path Highlighting**: Click nodes to highlight ancestral paths
+- **Information Panel**: View detailed information about selected family members
+- **Multi-Root Support**: Display multiple family trees simultaneously
+- **Smooth Navigation**: Enhanced scrolling and zooming capabilities
+
+## Technical Stack
+- Java Swing for GUI components
+- JGraphX for graph visualization
+- Maven for dependency management
 
 ## Installation
+
 ### Prerequisites
 - Java 8 or higher
-- Maven (for dependency management)
+- Maven 3.x
 
-### Build and Run
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/your-repo/LineageTool.git
-   cd LineageTool
-   ```
-2. **Compile the project:**
-   ```sh
-   mvn compile
-   ```
-3. **Run the application:**
-   ```sh
-   mvn exec:java -Dexec.mainClass="com.lineagetool.App"
-   ```
-
-## Usage
-### Adding a Family Member
-```java
-LineageService lineage = new LineageService();
-Person jacob = new Person("Jacob | Israel", new String[]{"Patriarch of Israel"});
-lineage.addFirst(new Node<>(jacob));
-```
-
-### Adding a Child
-```java
-Person joseph = new Person("Joseph", new String[]{"Son of Jacob"});
-lineage.addChild(new Node<>(joseph), "Jacob | Israel");
-```
-
-### Retrieving and Printing Lineage
-```java
-Node<Person> jacobNode = lineage.getNode("Jacob | Israel");
-lineage.printLineage(jacobNode);
-```
-
-## Running Tests
-To run unit tests, use:
+### Build Steps
 ```sh
-mvn test
+# Clone the repository
+git clone https://github.com/your-username/LineageTool.git
+cd LineageTool
+
+# Build with Maven
+mvn clean install
+
+# Run the application
+mvn exec:java -Dexec.mainClass="com.lineagetool.App"
+```
+
+## Usage Guide
+
+### Navigation
+- **Scroll**: Use mouse wheel to navigate vertically
+- **Pan**: Click and drag empty space to move around
+- **Zoom**: Hold Ctrl + mouse wheel to zoom in/out
+
+### Node Interactions
+- **Single Click**: View person's details and highlight path to root
+- **Double Click**: Collapse/expand node's children
+- **Drag**: Click and drag nodes to rearrange the tree
+
+### Adding Family Members
+```java
+LineageService service = new LineageService();
+service.addPerson("Isaac", new String[]{"Patriarch"}, null);
+service.addPerson("Jacob", new String[]{"Son of Isaac"}, "Isaac");
+```
+
+## Development
+
+### Project Structure
+```
+lineagetool/
+├── src/main/java/com/lineagetool/
+│   ├── App.java           # Application entry point
+│   ├── LineageService.java # Core lineage management
+│   ├── LineageViewer.java # GUI visualization
+│   └── Person.java        # Person entity model
+└── pom.xml               # Maven configuration
+```
+
+### Building from Source
+```sh
+mvn clean package
 ```
 
 ## Contributing
-Feel free to open issues and pull requests!
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
-[MIT License](LICENSE)
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
