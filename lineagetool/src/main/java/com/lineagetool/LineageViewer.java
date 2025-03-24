@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
@@ -67,7 +66,7 @@ public class LineageViewer extends JFrame {
         infoPanel.setWrapStyleWord(true);
 
         // Default root nodes
-        rootNodes.add("Jacob");
+        rootNodes.add("Isaac");
         
         // Build tree
         buildGraph();
@@ -283,33 +282,54 @@ public class LineageViewer extends JFrame {
     }
 
     private void highlightPathToRoot(mxCell cell) {
-        // Clear previous highlighting
         clearHighlights();
         
         graph.getModel().beginUpdate();
         try {
             mxCell current = cell;
+            String mainRootName = rootNodes.get(0); // Assumes first root is main tree
+            mxCell mainRoot = (mxCell) vertexMap.get(mainRootName);
+            
             while (current != null && current.isVertex()) {
-                // Highlight the current vertex
-                String oldStyle = current.getStyle();
-                current.setStyle(HIGHLIGHT_STYLE);
-                currentlyHighlighted.add(current);
-                
-                // Find parent edge and vertex
-                Object[] incomingEdges = graph.getIncomingEdges(current);
-                if (incomingEdges.length > 0) {
-                    mxCell edge = (mxCell) incomingEdges[0];
-                    edge.setStyle(HIGHLIGHT_EDGE_STYLE);
-                    currentlyHighlighted.add(edge);
-                    current = (mxCell) edge.getSource();
+                // Only highlight if we're in path to main root
+                if (isInPathToRoot(current, mainRoot)) {
+                    current.setStyle(HIGHLIGHT_STYLE);
+                    currentlyHighlighted.add(current);
+                    
+                    Object[] incomingEdges = graph.getIncomingEdges(current);
+                    if (incomingEdges.length > 0) {
+                        mxCell edge = (mxCell) incomingEdges[0];
+                        edge.setStyle(HIGHLIGHT_EDGE_STYLE);
+                        currentlyHighlighted.add(edge);
+                        current = (mxCell) edge.getSource();
+                    } else {
+                        current = null;
+                    }
                 } else {
-                    current = null;
+                    break; // Stop if not in main tree path
                 }
             }
             graph.refresh();
         } finally {
             graph.getModel().endUpdate();
         }
+    }
+
+    // Helper method to check if a cell is in path to main root
+    private boolean isInPathToRoot(mxCell cell, mxCell mainRoot) {
+        mxCell current = cell;
+        while (current != null) {
+            if (current == mainRoot) {
+                return true;
+            }
+            Object[] incomingEdges = graph.getIncomingEdges(current);
+            if (incomingEdges.length > 0) {
+                current = (mxCell) ((mxCell) incomingEdges[0]).getSource();
+            } else {
+                break;
+            }
+        }
+        return false;
     }
 
     private void clearHighlights() {

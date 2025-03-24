@@ -18,6 +18,8 @@ public class App
             viewer.addRootNode("Adah");
             viewer.addRootNode("Basemath");
             viewer.addRootNode("Isaac");
+            viewer.addRootNode("Oholibamah");
+            viewer.addRootNode("Timna");
             viewer.setVisible(true);
         });
     }
