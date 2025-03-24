@@ -41,6 +41,16 @@ public class LineagePopulate {
             "Genesis 36:2-3",
             "Mother of Jeush, Jalam, Korah. Daughter of Anah daughter of Zibeon the Hivite"
         }, (String[])null);
+
+        // Add Timna (Concubine of Eliphaz)
+        addPersonToLineage("Timna", new String[]{
+            "Concubine of Eliphaz",
+            "Lifespan: ",
+            "Genesis 36:12",
+            "Concubine of Eliphaz, sister of Lotan"
+        }, (String[])null);
+
+
         // Add Esau (Edomites)
         addPersonToLineage("Esau", new String[]{
             "Father of Edomites",
@@ -57,6 +67,57 @@ public class LineagePopulate {
             "Father of Temanites, son of Esau"
         }, "Esau", "Adah");
 
+        // Add Eliphaz's children
+
+        // Add Amalek (Father of Amalekites)
+        addPersonToLineage("Amalek", new String[]{
+            "Father of Amalekites",
+            "Lifespan: ",
+            "Genesis 36:12",
+            "Father of Amalekites, son of Eliphaz"
+        }, "Eliphaz", "Timna");
+
+        // Add Teman (Father of Temanites)
+        addPersonToLineage("Teman", new String[]{
+            "Father of Temanites",
+            "Lifespan: ",
+            "Genesis 36:11",
+            "Father of Temanites, son of Eliphaz"
+        }, "Eliphaz");
+
+        // Add Omar (Father of Omarites)
+        addPersonToLineage("Omar", new String[]{
+            "Father of Omarites",
+            "Lifespan: ",
+            "Genesis 36:11",
+            "Father of Omarites, son of Eliphaz"
+        }, "Eliphaz");
+
+        // Add Zepho (Father of Zephoites)
+        addPersonToLineage("Zepho", new String[]{
+            "Father of Zephoites",
+            "Lifespan: ",
+            "Genesis 36:11",
+            "Father of Zephoites, son of Eliphaz"
+        }, "Eliphaz");
+
+        // Add Gatam (Father of Gatamites)
+        addPersonToLineage("Gatam", new String[]{
+            "Father of Gatamites",
+            "Lifespan: ",
+            "Genesis 36:11",
+            "Father of Gatamites, son of Eliphaz"
+        }, "Eliphaz");
+
+        // Add Kenaz (Father of Kenazites)
+        addPersonToLineage("Kenaz", new String[]{
+            "Father of Kenazites",
+            "Lifespan: ",
+            "Genesis 36:11",
+            "Father of Kenazites, son of Eliphaz"
+        }, "Eliphaz");
+
+    
         //Add Reuel (Father of Reuelites)
         addPersonToLineage("Reuel", new String[]{
             "Father of Reuelites",
@@ -65,6 +126,41 @@ public class LineagePopulate {
             "Father of Reuelites, son of Esau"
         }, "Esau", "Basemath");
 
+        // Add Reuel's children
+
+        // Add Nahath (Father of Nahathites)
+        addPersonToLineage("Nahath", new String[]{
+            "Father of Nahathites",
+            "Lifespan: ",
+            "Genesis 36:13",
+            "Father of Nahathites, son of Reuel"
+        }, "Reuel");
+
+        // Add Zerah (Father of Zerahites)
+        addPersonToLineage("Zerah", new String[]{
+            "Father of Zerahites",
+            "Lifespan: ",
+            "Genesis 36:13",
+            "Father of Zerahites, son of Reuel"
+        }, "Reuel");
+
+        // Add Shammah (Father of Shammahites)
+        addPersonToLineage("Shammah", new String[]{
+            "Father of Shammahites",
+            "Lifespan: ",
+            "Genesis 36:13",
+            "Father of Shammahites, son of Reuel"
+        }, "Reuel");
+
+        // Add Mizzah (Father of Mizzahites)
+        addPersonToLineage("Mizzah", new String[]{
+            "Father of Mizzahites",
+            "Lifespan: ",
+            "Genesis 36:13",
+            "Father of Mizzahites, son of Reuel"
+        }, "Reuel");
+
+        
         // Add Jeush (Father of Jeushites)
         addPersonToLineage("Jeush", new String[]{
             "Father of Jeushites",
