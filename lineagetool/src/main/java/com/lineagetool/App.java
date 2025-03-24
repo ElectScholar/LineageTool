@@ -8,14 +8,13 @@ import javax.swing.SwingUtilities;
  */
 public class App {
     public static void main(String[] args) {
-        LineagePopulate populate = new LineagePopulate();
-        LineageService lineageService = populate.getLineageService();
+        FileRead fileRead = new FileRead("lineagetool/lineage.txt");
+        LineageService lineageService = fileRead.getLineageService();
         
         SwingUtilities.invokeLater(() -> {
             LineageViewer viewer = new LineageViewer(lineageService);
             
-            // Add all root nodes from the populate class
-            for (String rootNode : populate.getRootNodes()) {
+            for (String rootNode : fileRead.getRootNodes()) {
                 viewer.addRootNode(rootNode);
             }
             

@@ -3,10 +3,24 @@ package com.lineagetool;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /**
- * LineagePopulate is a helper class in initializing lineages of desired characters.
+ * DEPRECATED: This class is no longer the recommended way to initialize lineages.
+ * Please use {@link FileRead} instead which provides a more maintainable solution
+ * through external text file configuration.
+ * 
+ * LineagePopulate was a helper class for initializing lineages of desired characters
+ * directly in code. It has been replaced by the FileRead class which allows for
+ * easier maintenance and modification of lineage data through text files.
+ * 
+ * @deprecated Use {@link FileRead} with a properly formatted text file instead.
+ *             See lineage.txt for the expected format:
+ *             [ROOT] Name|Title|Lifespan|Scripture|Description
+ *             
  * @author ElectScholar
+ * @see FileRead
  */
+@Deprecated
 public class LineagePopulate {
     private final LineageService israelLineageService;
     private final List<String> rootNodes;
@@ -601,6 +615,7 @@ public class LineagePopulate {
             "Genesis 46:17",
             "daughter of Asher"
         }, "Asher");
+
         addPersonToLineage("Issachar", new String[]{
             "Patriarch of Issachar Tribe",
             "Lifespan: ",

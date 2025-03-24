@@ -21,9 +21,15 @@ import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 
+import javax.swing.JDialog;
+import javax.swing.BorderFactory;
+import java.awt.Dimension;
+import java.awt.Point;
+
 public class LineageViewer extends JFrame {
     private mxGraph graph;
     private Object parent;
+    private JDialog infoDialog;
     private JTextArea infoPanel;
     private LineageService lineageService;
     private mxGraphComponent graphComponent;
@@ -59,23 +65,32 @@ public class LineageViewer extends JFrame {
         graph.setCellsEditable(false);
         graph.setAutoSizeCells(true);
         
-        // Info panel
+        // Create info dialog instead of split pane
+        infoDialog = new JDialog(this, false); // false for non-modal
+        infoDialog.setUndecorated(true); // Remove window decorations
+        
         infoPanel = new JTextArea();
         infoPanel.setEditable(false);
         infoPanel.setLineWrap(true);
         infoPanel.setWrapStyleWord(true);
+        infoPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createRaisedBevelBorder(),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+        
+        JScrollPane scrollPane = new JScrollPane(infoPanel);
+        scrollPane.setPreferredSize(new Dimension(250, 150)); // Small fixed size
+        infoDialog.add(scrollPane);
+        infoDialog.pack();
+        
+        // Add the graph component directly to frame
+        add(graphComponent, BorderLayout.CENTER);
 
         // Default root nodes
         rootNodes.add("Isaac");
         
         // Build tree
         buildGraph();
-        
-        // Layout
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-            graphComponent, new JScrollPane(infoPanel));
-        splitPane.setDividerLocation(600);
-        add(splitPane, BorderLayout.CENTER);
         
         // Add mouse listener for selection
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
@@ -91,6 +106,8 @@ public class LineageViewer extends JFrame {
                         updateInfoPanel(personName);
                         highlightPathToRoot(clickedCell);
                     }
+                } else {
+                    hideInfoPanel();
                 }
             }
         });
@@ -272,6 +289,21 @@ public class LineageViewer extends JFrame {
             sb.append(detail).append("\n");
         }
         infoPanel.setText(sb.toString());
+        
+        // Position dialog near mouse
+        Point mouseLocation = getMousePosition(true);
+        if (mouseLocation != null) {
+            infoDialog.setLocation(
+                mouseLocation.x + 20,  // Offset from cursor
+                mouseLocation.y + 20
+            );
+        }
+        
+        infoDialog.setVisible(true);
+    }
+
+    private void hideInfoPanel() {
+        infoDialog.setVisible(false);
     }
 
     public void addRootNode(String personName) {
