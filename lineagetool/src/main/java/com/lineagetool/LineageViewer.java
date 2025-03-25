@@ -1,73 +1,84 @@
 package com.lineagetool;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Point;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.swing.JFrame;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 
-import javax.swing.JDialog;
-import javax.swing.BorderFactory;
-import java.awt.Dimension;
-import java.awt.Point;
-
-public class LineageViewer extends JFrame {
+public class LineageViewer extends AbstractLineageViewer implements GraphOperations {
     private mxGraph graph;
     private Object parent;
+    private mxGraphComponent graphComponent;
     private JDialog infoDialog;
     private JTextArea infoPanel;
-    private LineageService lineageService;
-    private mxGraphComponent graphComponent;
-    private List<String> rootNodes = new ArrayList<>();
-    private Map<String, Object> vertexMap = new HashMap<>();
+    private JTextField searchField;
 
-    private static final String STYLE_EXPANDED = "rounded=1;strokeColor=#666666;fillColor=#f5f5f5";
-    private static final String STYLE_COLLAPSED = "rounded=1;strokeColor=#666666;fillColor=#e0e0e0";
-    private static final String EXPAND_ICON = "+";
-    private static final String COLLAPSE_ICON = "-";
-    private static final double SCROLL_SPEED = 5.0; // Adjust this value to change scroll speed
-    private static final double ZOOM_FACTOR = 1.2;  // Adjust for zoom sensitivity
-    private static final String HIGHLIGHT_STYLE = "rounded=1;strokeColor=#FF0000;strokeWidth=3;fillColor=#f5f5f5";
-    private static final String HIGHLIGHT_EDGE_STYLE = "strokeColor=#FF0000;strokeWidth=2";
+    private Map<String, Object> vertexMap = new HashMap<>();
+    private List<Object> searchHighlighted = new ArrayList<>();
     private List<Object> currentlyHighlighted = new ArrayList<>();
 
     public LineageViewer(LineageService lineageService) {
-        this.lineageService = lineageService;
-        setTitle("Lineage Viewer");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        super(lineageService, new ArrayList<>(Collections.singletonList("Isaac")));
+        initializeComponents();
+        setupEventHandlers();
+        buildGraph();
+        collapseAllNodes();
+    }
 
-        // Create graph
+    @Override
+    protected void initializeComponents() {
+        // Graph initialization
         graph = new mxGraph();
         parent = graph.getDefaultParent();
         graphComponent = new mxGraphComponent(graph);
         
-        // Enable moving of vertices
+        configureGraph();
+        createInfoDialog();
+        
+        // Add graph component to frame
+        add(graphComponent, BorderLayout.CENTER);
+        
+        // Add search panel
+        add(createSearchPanel(), BorderLayout.NORTH);
+    }
+
+    private void configureGraph() {
         graph.setCellsMovable(true);
         graph.setCellsResizable(false);
         graph.setAllowDanglingEdges(false);
         graph.setCellsEditable(false);
         graph.setAutoSizeCells(true);
-        
-        // Create info dialog instead of split pane
-        infoDialog = new JDialog(this, false); // false for non-modal
-        infoDialog.setUndecorated(true); // Remove window decorations
+        graphComponent.setTripleBuffered(true);
+    }
+
+    private void createInfoDialog() {
+        infoDialog = new JDialog(this, false);
+        infoDialog.setUndecorated(true);
         
         infoPanel = new JTextArea();
         infoPanel.setEditable(false);
@@ -79,132 +90,163 @@ public class LineageViewer extends JFrame {
         ));
         
         JScrollPane scrollPane = new JScrollPane(infoPanel);
-        scrollPane.setPreferredSize(new Dimension(250, 150)); // Small fixed size
+        scrollPane.setPreferredSize(new Dimension(250, 150));
         infoDialog.add(scrollPane);
         infoDialog.pack();
-        
-        // Add the graph component directly to frame
-        add(graphComponent, BorderLayout.CENTER);
+    }
 
-        // Default root nodes
-        rootNodes.add("Isaac");
+    private JPanel createSearchPanel() {
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchField = new JTextField(20);
+        JButton clearButton = new JButton("Clear");
         
-        // Build tree
-        buildGraph();
+        clearButton.addActionListener(e -> {
+            searchField.setText("");
+            expandAllNodes();
+            clearSearchHighlights();
+        });
         
-        // Add mouse listener for selection
+        searchPanel.add(searchField);
+        searchPanel.add(clearButton);
+        return searchPanel;
+    }
+
+    @Override
+    protected void setupEventHandlers() {
+        // Mouse listener for cell interactions
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
-                if (cell != null && cell instanceof mxCell) {
+                if (cell instanceof mxCell) {
                     mxCell clickedCell = (mxCell) cell;
-                    if (e.getClickCount() == 2) {  // Double click to collapse/expand
-                        toggleCollapse(clickedCell);
-                    } else if (e.getClickCount() == 1) {  // Single click for info
-                        String personName = graph.getLabel(cell).replace(EXPAND_ICON, "").replace(COLLAPSE_ICON, "").trim();
-                        updateInfoPanel(personName);
-                        highlightPathToRoot(clickedCell);
-                    }
+                    handleCellClick(clickedCell, e);
                 } else {
                     hideInfoPanel();
                 }
             }
         });
 
-        // Add scroll and zoom control
-        graphComponent.getGraphControl().addMouseWheelListener(new MouseWheelListener() {
+        // Scroll and zoom control
+        graphComponent.getGraphControl().addMouseWheelListener(this::handleMouseWheel);
+
+        // Search on Enter key
+        searchField.addKeyListener(new KeyAdapter() {
             @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                if (e.isControlDown()) {
-                    // Zoom when Ctrl is pressed
-                    if (e.getWheelRotation() < 0) {
-                        graphComponent.zoomIn();
-                    } else {
-                        graphComponent.zoomOut();
-                    }
-                } else {
-                    // Enhanced scrolling without Ctrl
-                    int scrollAmount = (int)(e.getUnitsToScroll() * SCROLL_SPEED);
-                    if (e.isShiftDown()) {
-                        // Horizontal scroll when Shift is pressed
-                        graphComponent.getHorizontalScrollBar().setValue(
-                            graphComponent.getHorizontalScrollBar().getValue() + 
-                            scrollAmount);
-                    } else {
-                        // Vertical scroll
-                        graphComponent.getVerticalScrollBar().setValue(
-                            graphComponent.getVerticalScrollBar().getValue() + 
-                            scrollAmount);
-                    }
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    searchNodes(searchField.getText());
                 }
-                e.consume();
             }
         });
-        
-        // Enable scroll optimization
-        graphComponent.setTripleBuffered(true);
     }
 
-    private void buildGraph() {
+    private void handleCellClick(mxCell cell, MouseEvent e) {
+        if (e.getClickCount() == 2) {  // Double click to collapse/expand
+            toggleCollapse(cell);
+        } else if (e.getClickCount() == 1) {  // Single click for info
+            String personName = extractPersonName(cell);
+            updateInfoPanel(personName);
+            highlightPathToRoot(cell);
+        }
+    }
+
+    private String extractPersonName(mxCell cell) {
+        return cell.getValue().toString()
+            .replace(LineageViewerStyles.EXPAND_ICON, "")
+            .replace(LineageViewerStyles.COLLAPSE_ICON, "")
+            .trim();
+    }
+
+    private void handleMouseWheel(MouseWheelEvent e) {
+        if (e.isControlDown()) {
+            // Zoom when Ctrl is pressed
+            if (e.getWheelRotation() < 0) {
+                graphComponent.zoomIn();
+            } else {
+                graphComponent.zoomOut();
+            }
+        } else {
+            // Enhanced scrolling without Ctrl
+            int scrollAmount = (int)(e.getUnitsToScroll() * LineageViewerStyles.SCROLL_SPEED);
+            if (e.isShiftDown()) {
+                // Horizontal scroll when Shift is pressed
+                graphComponent.getHorizontalScrollBar().setValue(
+                    graphComponent.getHorizontalScrollBar().getValue() + scrollAmount);
+            } else {
+                // Vertical scroll
+                graphComponent.getVerticalScrollBar().setValue(
+                    graphComponent.getVerticalScrollBar().getValue() + scrollAmount);
+            }
+        }
+        e.consume();
+    }
+
+    @Override
+    protected void buildGraph() {
         graph.getModel().beginUpdate();
         try {
-            // Clear existing graph and vertex map
+            // Clear existing graph
             graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
             vertexMap.clear();
             
             // Build trees for each root node
-            double xOffset = 0;
             for (String rootName : rootNodes) {
                 Node<Person> rootPerson = lineageService.getNode(rootName);
                 if (rootPerson != null) {
-                    Object vertex = buildGraphRecursive(rootPerson, null);
-                    // Position root nodes horizontally
-                    graph.getModel().setGeometry(vertex, 
-                        new mxGeometry(xOffset, 0, 100, 40));
-                    xOffset += 200; // Space between root nodes
+                    buildGraphRecursive(rootPerson, null);
                 }
             }
             
-            // Apply hierarchical layout
-            mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-            layout.setInterRankCellSpacing(50);
-            layout.execute(parent);
+            applyHierarchicalLayout();
+            
+            // Collapse non-root nodes
+            collapseNonRootNodes();
         } finally {
             graph.getModel().endUpdate();
+        }
+    }
+
+    private void applyHierarchicalLayout() {
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+        layout.setInterRankCellSpacing(50);
+        layout.execute(parent);
+    }
+
+    private void collapseNonRootNodes() {
+        Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+        for (Object vertex : vertices) {
+            if (vertex instanceof mxCell) {
+                mxCell cell = (mxCell) vertex;
+                if (!isRootCell(cell) && graph.getOutgoingEdges(cell).length > 0) {
+                    setCollapsed(cell, true);
+                }
+            }
         }
     }
 
     private Object buildGraphRecursive(Node<Person> personNode, Object parentVertex) {
         String personName = personNode.val.getName();
         Object vertex;
-
+    
         if (vertexMap.containsKey(personName)) {
             vertex = vertexMap.get(personName);
             if (parentVertex != null) {
                 Object[] edges = graph.getEdgesBetween(parentVertex, vertex);
                 if (edges.length == 0) {
-                    graph.insertEdge(parent, null, "", parentVertex, vertex,
-                        "strokeColor=#666666");
+                    graph.insertEdge(parent, null, "", parentVertex, vertex, "strokeColor=#666666");
                 }
             }
         } else {
-            // Add collapse/expand indicator to vertices with children
-            String label = personName;
-            if (!personNode.next.isEmpty()) {
-                label += " " + COLLAPSE_ICON;
-            }
+            String label = createVertexLabel(personName, personNode);
             
-            vertex = graph.insertVertex(parent, null, label,
-                0, 0, 100, 40, STYLE_EXPANDED);
+            vertex = graph.insertVertex(parent, null, label, 0, 0, 100, 40, LineageViewerStyles.STYLE_EXPANDED);
             vertexMap.put(personName, vertex);
             
             if (parentVertex != null) {
-                graph.insertEdge(parent, null, "", parentVertex, vertex,
-                    "strokeColor=#666666");
+                graph.insertEdge(parent, null, "", parentVertex, vertex, "strokeColor=#666666");
             }
-
-            // Create child vertices
+    
             for (Node<Person> child : personNode.next) {
                 buildGraphRecursive(child, vertex);
             }
@@ -213,52 +255,18 @@ public class LineageViewer extends JFrame {
         return vertex;
     }
 
-    private void toggleCollapse(mxCell cell) {
-        graph.getModel().beginUpdate();
-        try {
-            boolean collapsed = !graph.isCellCollapsed(cell);
-            graph.getModel().setCollapsed(cell, collapsed);
-            
-            // Get all connected edges and child vertices
-            List<Object> descendants = new ArrayList<>();
-            getDescendants(cell, descendants);
-            
-            // Toggle visibility
-            for (Object descendant : descendants) {
-                if (descendant instanceof mxCell) {
-                    mxCell mxDescendant = (mxCell) descendant;
-                    if (mxDescendant.isVertex()) {
-                        graph.getModel().setVisible(mxDescendant, !collapsed);
-                        // Also hide edges connected to this vertex
-                        for (Object edge : graph.getEdges(mxDescendant)) {
-                            mxCell edgeCell = (mxCell) edge;
-                            mxCell source = (mxCell) edgeCell.getSource();
-                            if (source == cell || !descendants.contains(source)) {
-                                graph.getModel().setVisible(edge, !collapsed);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Update the cell style and label
-            String label = cell.getValue().toString();
-            label = label.replace(EXPAND_ICON, "").replace(COLLAPSE_ICON, "").trim();
-            cell.setValue(label + " " + (collapsed ? EXPAND_ICON : COLLAPSE_ICON));
-            cell.setStyle(collapsed ? STYLE_COLLAPSED : STYLE_EXPANDED);
-            
-            // Refresh layout
-            mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-            layout.setInterRankCellSpacing(50);
-            layout.execute(parent);
-            
-            graph.refresh();
-        } finally {
-            graph.getModel().endUpdate();
-        }
+    private String createVertexLabel(String personName, Node<Person> personNode) {
+        return personName + (personNode.next.isEmpty() ? "" : LineageViewerStyles.COLLAPSE_ICON);
     }
 
-    private void getDescendants(mxCell cell, List<Object> descendants) {
+    @Override
+    public void toggleCollapse(mxCell cell) {
+        boolean collapsed = !graph.isCellCollapsed(cell);
+        setCollapsed(cell, collapsed);
+    }
+
+    @Override
+    public void getDescendants(mxCell cell, List<Object> descendants) {
         Object[] outgoing = graph.getOutgoingEdges(cell);
         for (Object edge : outgoing) {
             mxCell target = (mxCell) ((mxCell) edge).getTarget();
@@ -270,9 +278,162 @@ public class LineageViewer extends JFrame {
         }
     }
 
+    @Override
+    public void highlightPathToRoot(mxCell cell) {
+        clearHighlights();
+        
+        graph.getModel().beginUpdate();
+        try {
+            mxCell current = cell;
+            while (current != null && current.isVertex()) {
+                current.setStyle(LineageViewerStyles.HIGHLIGHT_STYLE);
+                currentlyHighlighted.add(current);
+                
+                Object[] incomingEdges = graph.getIncomingEdges(current);
+                if (incomingEdges.length > 0) {
+                    mxCell edge = (mxCell) incomingEdges[0];
+                    edge.setStyle(LineageViewerStyles.HIGHLIGHT_EDGE_STYLE);
+                    currentlyHighlighted.add(edge);
+                    current = (mxCell) edge.getSource();
+                } else {
+                    break;
+                }
+            }
+            graph.refresh();
+        } finally {
+            graph.getModel().endUpdate();
+        }
+    }
+
+    @Override
+    public void clearHighlights() {
+        graph.getModel().beginUpdate();
+        try {
+            for (Object cell : currentlyHighlighted) {
+                if (cell instanceof mxCell) {
+                    mxCell mxCell = (mxCell) cell;
+                    if (mxCell.isVertex()) {
+                        // Don't clear if cell is search highlighted
+                        if (!searchHighlighted.contains(mxCell)) {
+                            boolean isCollapsed = graph.isCellCollapsed(mxCell);
+                            mxCell.setStyle(isCollapsed ? LineageViewerStyles.STYLE_COLLAPSED : LineageViewerStyles.STYLE_EXPANDED);
+                        }
+                    } else {
+                        mxCell.setStyle("strokeColor=#666666");
+                    }
+                }
+            }
+            currentlyHighlighted.clear();
+            graph.refresh();
+        } finally {
+            graph.getModel().endUpdate();
+        }
+    }
+
+    @Override
+    public void searchNodes(String searchTerm) {
+        clearSearchHighlights();
+        searchTerm = searchTerm.toLowerCase().trim();
+        
+        if (searchTerm.isEmpty()) {
+            expandAllNodes();
+            return;
+        }
+
+        graph.getModel().beginUpdate();
+        try {
+            // First, collapse all nodes
+            collapseAllNodes();
+            
+            // Find matching nodes
+            Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+            Set<mxCell> pathNodes = new HashSet<>();
+            
+            for (Object vertex : vertices) {
+                if (vertex instanceof mxCell) {
+                    mxCell cell = (mxCell) vertex;
+                    String cellValue = extractPersonName(cell).toLowerCase();
+                    
+                    if (cellValue.contains(searchTerm)) {
+                        // Add path to root for this node
+                        collectPathToRoot(cell, pathNodes);
+                        cell.setStyle(LineageViewerStyles.SEARCH_HIGHLIGHT_STYLE);
+                        searchHighlighted.add(cell);
+                    }
+                }
+            }
+            
+            // Expand only the nodes in the path
+            pathNodes.forEach(node -> graph.getModel().setCollapsed(node, false));
+            
+            graph.refresh();
+        } finally {
+            graph.getModel().endUpdate();
+        }
+    }
+
+    @Override
+    public void collectPathToRoot(mxCell cell, Set<mxCell> pathNodes) {
+        mxCell current = cell;
+        while (current != null && current.isVertex()) {
+            pathNodes.add(current);
+            Object[] incomingEdges = graph.getIncomingEdges(current);
+            if (incomingEdges.length > 0) {
+                current = (mxCell) ((mxCell) incomingEdges[0]).getSource();
+            } else {
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void collapseAllNodes() {
+        Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+        for (Object vertex : vertices) {
+            if (vertex instanceof mxCell) {
+                mxCell cell = (mxCell) vertex;
+                if (graph.getOutgoingEdges(cell).length > 0) {
+                    graph.getModel().setCollapsed(cell, true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void expandAllNodes() {
+        Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+        for (Object vertex : vertices) {
+            if (vertex instanceof mxCell) {
+                mxCell cell = (mxCell) vertex;
+                if (graph.getOutgoingEdges(cell).length > 0) {
+                    graph.getModel().setCollapsed(cell, false);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void clearSearchHighlights() {
+        graph.getModel().beginUpdate();
+        try {
+            for (Object cell : searchHighlighted) {
+                if (cell instanceof mxCell) {
+                    mxCell mxCell = (mxCell) cell;
+                    if (mxCell.isVertex()) {
+                        boolean isCollapsed = graph.isCellCollapsed(mxCell);
+                        mxCell.setStyle(isCollapsed ? LineageViewerStyles.STYLE_COLLAPSED : LineageViewerStyles.STYLE_EXPANDED);
+                    }
+                }
+            }
+            searchHighlighted.clear();
+            graph.refresh();
+        } finally {
+            graph.getModel().endUpdate();
+        }
+    }
+
     private void updateInfoPanel(String personName) {
-        personName = personName.replace(EXPAND_ICON, "").replace(COLLAPSE_ICON, "").trim();
-        if (personName == null) {
+        if (personName == null || personName.isEmpty()) {
             infoPanel.setText("No details available.");
             return;
         }
@@ -288,6 +449,7 @@ public class LineageViewer extends JFrame {
         for (String detail : person.getDetails()) {
             sb.append(detail).append("\n");
         }
+        
         infoPanel.setText(sb.toString());
         
         // Position dialog near mouse
@@ -306,61 +468,34 @@ public class LineageViewer extends JFrame {
         infoDialog.setVisible(false);
     }
 
-    public void addRootNode(String personName) {
-        if (!rootNodes.contains(personName) && lineageService.getNode(personName) != null) {
-            rootNodes.add(personName);
-            buildGraph();
-        }
+    private boolean isRootCell(mxCell cell) {
+        String cellValue = extractPersonName(cell);
+        return rootNodes.contains(cellValue);
     }
 
-    private void highlightPathToRoot(mxCell cell) {
-        // Clear previous highlighting
-        clearHighlights();
+    private void setCollapsed(mxCell cell, boolean collapsed) {
+        String cellValue = extractPersonName(cell);
+        cell.setValue(cellValue + (collapsed ? 
+            LineageViewerStyles.EXPAND_ICON : 
+            LineageViewerStyles.COLLAPSE_ICON));
+        cell.setStyle(collapsed ? 
+            LineageViewerStyles.STYLE_COLLAPSED : 
+            LineageViewerStyles.STYLE_EXPANDED);
         
-        graph.getModel().beginUpdate();
-        try {
-            mxCell current = cell;
-            while (current != null && current.isVertex()) {
-                // Highlight the current vertex
-                String oldStyle = current.getStyle();
-                current.setStyle(HIGHLIGHT_STYLE);
-                currentlyHighlighted.add(current);
-                
-                // Find parent edge and vertex
-                Object[] incomingEdges = graph.getIncomingEdges(current);
-                if (incomingEdges.length > 0) {
-                    mxCell edge = (mxCell) incomingEdges[0];
-                    edge.setStyle(HIGHLIGHT_EDGE_STYLE);
-                    currentlyHighlighted.add(edge);
-                    current = (mxCell) edge.getSource();
-                } else {
-                    current = null;
-                }
-            }
-            graph.refresh();
-        } finally {
-            graph.getModel().endUpdate();
+        // Hide/show child cells and their edges
+        Object[] childCells = graph.getChildCells(cell, true, true);
+        for (Object childCell : childCells) {
+            graph.getModel().setVisible(childCell, !collapsed);
         }
-    }
-
-    private void clearHighlights() {
-        graph.getModel().beginUpdate();
-        try {
-            for (Object cell : currentlyHighlighted) {
-                if (cell instanceof mxCell) {
-                    mxCell mxCell = (mxCell) cell;
-                    if (mxCell.isVertex()) {
-                        boolean isCollapsed = graph.isCellCollapsed(mxCell);
-                        mxCell.setStyle(isCollapsed ? STYLE_COLLAPSED : STYLE_EXPANDED);
-                    } else {
-                        mxCell.setStyle("strokeColor=#666666");
-                    }
-                }
+        
+        Object[] edges = graph.getEdges(cell);
+        for (Object edge : edges) {
+            mxCell edgeCell = (mxCell) edge;
+            if (edgeCell.getTarget().getParent() != cell.getParent()) {
+                graph.getModel().setVisible(edge, !collapsed);
             }
-            currentlyHighlighted.clear();
-            graph.refresh();
-        } finally {
-            graph.getModel().endUpdate();
         }
+        
+        graph.getModel().setCollapsed(cell, collapsed);
     }
 }
