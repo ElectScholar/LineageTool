@@ -81,6 +81,43 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
         return size;
     }
 
+    public void removePerson(String name) {
+        if (name == null) {
+            System.out.println("No name provided for removePerson()");
+            return;
+        }
+        
+        // Search through all root trees
+        for (Node<Person> root : heads) {
+            Queue<Node<Person>> queue = new LinkedList<>();
+            queue.add(root);
+
+            while (!queue.isEmpty()) {
+                Node<Person> current = queue.poll();
+                
+                if (current.val.getName().equals(name)) {
+                    // Remove the parent-child relationship
+                    if (current.prev != null) {
+                        for (Node<Person> parent : current.prev) {
+                            parent.next.remove(current);
+                        }
+                    }
+                    if (current.next != null) {
+                        for (Node<Person> child : current.next) {
+                            child.prev.remove(current);
+                        }
+                    }
+                    size--;
+                    return;
+                }
+                
+                if (current.next != null) {
+                    queue.addAll(current.next);
+                }
+            }
+        }
+    }
+
     public List<Node<Person>> getHeads() {
         return heads;
     }

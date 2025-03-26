@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -35,7 +36,10 @@ import javax.swing.border.EmptyBorder;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.view.mxGraph; // Correct import for Rectangle
+// Removed incorrect import
+//import javafx.scene.shape.Rectangle;
 
 public class LineageViewer extends AbstractLineageViewer implements GraphOperations {
     // Graph components
@@ -48,6 +52,8 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
     private JTextArea infoPanel;
     private JTextField searchField;
     private JPanel toolbarPanel;
+
+    //key data structures
     private final Map<String, Object> vertexMap = new HashMap<>();
     private final List<Object> searchHighlighted = new ArrayList<>();
     private final List<Object> currentlyHighlighted = new ArrayList<>();
@@ -258,18 +264,116 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         e.consume();
     }
 
+    private void searchAndFocusLineage(String searchTerm) {
+    graph.getModel().beginUpdate();
+    try {
+        collapseExceptLineage(searchTerm);
+        
+        // Find and focus on the searched cell
+        Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+        for (Object vertex : vertices) {
+            if (vertex instanceof mxCell) {
+                mxCell cell = (mxCell) vertex;
+                String cellValue = extractPersonName(cell).toLowerCase();
+                if (cellValue.equals(searchTerm.toLowerCase())) {
+                    // Get cell geometry
+                    graphComponent.scrollCellToVisible(cell);
+                    mxRectangle mxBounds = graphComponent.getGraph().getCellBounds(cell);
+                    Rectangle bounds = new Rectangle((int) mxBounds.getX(), (int) mxBounds.getY(), (int) mxBounds.getWidth(), (int) mxBounds.getHeight());
+                    if (bounds != null) {
+                        // Center the viewport on the cell
+                        Rectangle viewRect = graphComponent.getViewport().getViewRect();
+                        int centerX = bounds.x + (bounds.width - viewRect.width) / 2;
+                        int centerY = bounds.y + (bounds.height - viewRect.height) / 2;
+                        graphComponent.getViewport().setViewPosition(new Point(centerX, centerY));
+                    }
+                    break;
+                }
+            }
+        }
+        
+        graph.refresh();
+    } finally {
+        graph.getModel().endUpdate();
+    }
+}
+
+    private void collapseExceptLineage(String searchTerm) {
+        graph.getModel().beginUpdate();
+        try {
+            // First make everything invisible and collapsed
+            Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+            for (Object vertex : vertices) {
+                if (vertex instanceof mxCell) {
+                    mxCell cell = (mxCell) vertex;
+                    setCollapsed(cell, true);
+                    graph.getModel().setVisible(cell, false);
+                }
+            }
+    
+            // Find the searched node
+            mxCell searchedCell = null;
+            for (Object vertex : vertices) {
+                if (vertex instanceof mxCell) {
+                    mxCell cell = (mxCell) vertex;
+                    String cellValue = extractPersonName(cell).toLowerCase();
+                    if (cellValue.equals(searchTerm.toLowerCase())) {
+                        searchedCell = cell;
+                        break;
+                    }
+                }
+            }
+    
+            if (searchedCell != null) {
+                // Make the searched node visible
+                graph.getModel().setVisible(searchedCell, true);
+                
+                // Collect and show only path to root
+                Set<mxCell> pathToRoot = new HashSet<>();
+                collectPathToRoot(searchedCell, pathToRoot);
+                
+                // Make path to root visible and highlight edges
+                for (mxCell node : pathToRoot) {
+                    graph.getModel().setVisible(node, true);
+                    // Make edges to ancestors visible
+                    Object[] incomingEdges = graph.getIncomingEdges(node);
+                    if (incomingEdges.length > 0) {
+                        mxCell edge = (mxCell) incomingEdges[0];
+                        graph.getModel().setVisible(edge, true);
+                        edge.setStyle(LineageViewerStyles.EDGE_STYLE_HIGHLIGHT);
+                    }
+                }
+    
+                // Highlight the searched node
+                searchedCell.setStyle(LineageViewerStyles.SEARCH_HIGHLIGHT_STYLE);
+                searchHighlighted.add(searchedCell);
+            }
+    
+            graph.refresh();
+        } finally {
+            graph.getModel().endUpdate();
+        }
+    }
+
     private void setupSearchHandler() {
         if (searchField != null) {
             searchField.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                        searchNodes(searchField.getText());
+                        String searchTerm = searchField.getText().trim();
+                        if (!searchTerm.isEmpty()) {
+                            clearSearchHighlights();
+                            searchAndFocusLineage(searchTerm);
+                        } else {
+                            expandAllNodes();
+                        }
                     }
                 }
             });
         }
     }
+
     private void handleCellClick(mxCell cell, MouseEvent e) {
         if (e.getClickCount() == 2) {  // Double click to collapse/expand
             toggleCollapse(cell);
@@ -313,29 +417,11 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
 
     private void applyLayout() {
         mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-        layout.setInterRankCellSpacing(50);
+        layout.setInterRankCellSpacing(100);
+        layout.setParallelEdgeSpacing(50);  // Add space between parallel edges
+        layout.setIntraCellSpacing(10);     // Add space within ranks
         layout.execute(parent);
         graph.refresh();
-    }
-
-    private void applyHierarchicalLayout() {
-        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-        layout.setInterRankCellSpacing(50);
-        layout.setParallelEdgeSpacing(50);  // Add space between parallel edges
-        layout.setIntraCellSpacing(50);     // Add space within ranks
-        layout.execute(parent);
-    }
-
-    private void collapseNonRootNodes() {
-        Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
-        for (Object vertex : vertices) {
-            if (vertex instanceof mxCell) {
-                mxCell cell = (mxCell) vertex;
-                if (!isRootCell(cell) && graph.getOutgoingEdges(cell).length > 0) {
-                    setCollapsed(cell, true);
-                }
-            }
-        }
     }
 
     private Object buildGraphRecursive(Node<Person> personNode, Object parentVertex) {
@@ -457,7 +543,7 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         graph.getModel().beginUpdate();
         try {
             // First, collapse all nodes
-            collapseAllNodes();
+            //collapseAllNodes();
             
             // Find matching nodes
             Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
@@ -511,9 +597,8 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
                     mxCell cell = (mxCell) vertex;
                     String cellName = extractPersonName(cell);
                     // Explicitly check for Jacob and Esau
-                    if (!isRootCell(cell) && graph.getOutgoingEdges(cell).length > 0) {
+                    //&& graph.getOutgoingEdges(cell).length > 0
                         setCollapsed(cell, true);
-                    }
                 }
             }
             graph.refresh();
@@ -610,12 +695,6 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         infoDialog.setVisible(false);
     }
 
-    private boolean isRootCell(mxCell cell) {
-        String cellValue = extractPersonName(cell);
-        // Check if this node is in the rootNodes list from LineageService
-        return lineageService.getRootNodes().contains(cellValue);
-    }
-
     private void setCollapsed(mxCell cell, boolean collapsed) {
         // Don't return early for root nodes - we need to process their children
         String cellValue = extractPersonName(cell);
@@ -634,26 +713,12 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         
         // Set visibility for descendants
         for (Object descendant : descendants) {
-            if (descendant instanceof mxCell) {
-                mxCell descendantCell = (mxCell) descendant;
-                // Only hide if the descendant isn't a direct child of a root
-                if (!isDirectChildOfRoot(descendantCell)) {
-                    graph.getModel().setVisible(descendant, !collapsed);
-                }
-            }
+            graph.getModel().setVisible(descendant, !collapsed);
         }
         
         graph.getModel().setCollapsed(cell, collapsed);
     }
 
-    private boolean isDirectChildOfRoot(mxCell cell) {
-        Object[] incomingEdges = graph.getIncomingEdges(cell);
-        if (incomingEdges.length > 0) {
-            mxCell parentCell = (mxCell) ((mxCell) incomingEdges[0]).getSource();
-            return isRootCell(parentCell);
-        }
-        return false;
-    }
 
     public mxGraphComponent getGraphComponent() {
         return graphComponent;
