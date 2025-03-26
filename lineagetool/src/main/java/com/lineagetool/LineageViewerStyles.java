@@ -17,6 +17,12 @@ public final class LineageViewerStyles {
     public static final double SCROLL_SPEED = 5.0;
     public static final double ZOOM_FACTOR = 1.2;
 
+    // Edge Styles
+    public static final String EDGE_STYLE_NORMAL = "edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;" +
+    "strokeWidth=2;strokeColor=#666666";
+public static final String EDGE_STYLE_HIGHLIGHT = "edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;" +
+    "strokeWidth=3;strokeColor=#FF0000";
+
     // Prevent instantiation
     private LineageViewerStyles() {
         throw new AssertionError("Cannot be instantiated");
