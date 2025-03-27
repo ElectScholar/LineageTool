@@ -58,9 +58,15 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
     private final List<Object> searchHighlighted = new ArrayList<>();
     private final List<Object> currentlyHighlighted = new ArrayList<>();
 
+    private String designatedRoot = "Isaac";  // Default designated root
+
     // Toolbar buttons
     private JButton zoomInButton, zoomOutButton, collapseAllButton, expandAllButton;
     private JToggleButton searchModeButton;
+
+    // Add these fields at the top of LineageViewer class
+    private Set<mxCell> lastExpandedGeneration = new HashSet<>();
+    private boolean expansionStarted = false;
 
     public LineageViewer(LineageService lineageService) {
         super(lineageService, new ArrayList<>(Collections.singletonList("Isaac")));
@@ -204,7 +210,7 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         
         clearButton.addActionListener(e -> {
             searchField.setText("");
-            expandAllNodes();
+            //expandAllNodes();
             clearSearchHighlights();
         });
         
@@ -262,6 +268,11 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
             }
         }
         e.consume();
+    }
+
+
+    public void setDesignatedRoot(String rootName) {
+        this.designatedRoot = rootName;
     }
 
     private void searchAndFocusLineage(String searchTerm) {
@@ -535,10 +546,11 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         clearSearchHighlights();
         searchTerm = searchTerm.toLowerCase().trim();
         
-        if (searchTerm.isEmpty()) {
+        /*if (searchTerm.isEmpty()) {
             expandAllNodes();
             return;
         }
+            */
 
         graph.getModel().beginUpdate();
         try {
@@ -588,6 +600,8 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
 
     @Override
     public void collapseAllNodes() {
+        expansionStarted = false;
+        lastExpandedGeneration.clear();
         graph.getModel().beginUpdate();
         try {
             // First pass - collapse all non-root nodes with children
@@ -611,32 +625,125 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
     public void expandAllNodes() {
         graph.getModel().beginUpdate();
         try {
-            Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
-            for (Object vertex : vertices) {
-                if (vertex instanceof mxCell) {
-                    mxCell cell = (mxCell) vertex;
-                    if (graph.isCellCollapsed(cell)) {
-                        // Get all descendants
-                        List<Object> descendants = new ArrayList<>();
-                        getDescendants(cell, descendants);
-                        
-                        // Set visibility and style
-                        for (Object descendant : descendants) {
-                            graph.getModel().setVisible(descendant, true);
+            if (!expansionStarted) {
+                // First press - start with root
+                mxCell rootCell = null;
+                Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+                for (Object vertex : vertices) {
+                    if (vertex instanceof mxCell) {
+                        mxCell cell = (mxCell) vertex;
+                        String cellName = extractPersonName(cell);
+                        if (cellName.equals(designatedRoot)) {
+                            rootCell = cell;
+                            break;
                         }
-                        
-                        // Update cell style and label
-                        String cellValue = extractPersonName(cell);
-                        cell.setValue(cellValue + LineageViewerStyles.COLLAPSE_ICON);
-                        cell.setStyle(LineageViewerStyles.STYLE_EXPANDED);
-                        graph.getModel().setCollapsed(cell, false);
                     }
                 }
+                
+                if (rootCell != null) {
+                    lastExpandedGeneration.clear();
+                    lastExpandedGeneration.add(rootCell);
+                    expansionStarted = true;
+                    expandNextGeneration(lastExpandedGeneration);
+                }
+            } else {
+                // Subsequent presses - expand next generation
+                Set<mxCell> nextGeneration = collectNextGeneration();
+                if (!nextGeneration.isEmpty()) {
+                    lastExpandedGeneration = nextGeneration;
+                    expandNextGeneration(nextGeneration);
+                } else {
+                    // No more generations to expand
+                    expansionStarted = false;
+                }
             }
+            
             graph.refresh();
         } finally {
             graph.getModel().endUpdate();
         }
+    }
+
+    // Update expandNextGeneration to accept a Set of cells
+    private void expandNextGeneration(Set<mxCell> currentGeneration) {
+        // First ensure all parents are visible
+        for (mxCell cell : currentGeneration) {
+            Object[] incoming = graph.getIncomingEdges(cell);
+            if (incoming.length > 0) {
+                mxCell parent = (mxCell) ((mxCell) incoming[0]).getSource();
+                if (!graph.getModel().isVisible(parent)) {
+                    graph.getModel().setVisible(parent, true);
+                    graph.getModel().setVisible(incoming[0], true);
+                }
+            }
+        }
+        
+        // Then expand one generation
+        for (mxCell cell : currentGeneration) {
+            if (graph.isCellCollapsed(cell)) {
+                // Get immediate children only
+                Object[] outgoing = graph.getOutgoingEdges(cell);
+                for (Object edge : outgoing) {
+                    mxCell target = (mxCell) ((mxCell) edge).getTarget();
+                    graph.getModel().setVisible(edge, true);
+                    graph.getModel().setVisible(target, true);
+                }
+                
+                // Update cell style and label
+                String cellValue = extractPersonName(cell);
+                cell.setValue(cellValue + LineageViewerStyles.COLLAPSE_ICON);
+                cell.setStyle(LineageViewerStyles.STYLE_EXPANDED);
+                graph.getModel().setCollapsed(cell, false);
+            }
+        }
+    }
+
+    // Add this helper method to collect the next generation
+    private Set<mxCell> collectNextGeneration() {
+        Set<mxCell> nextGeneration = new HashSet<>();
+        
+        for (mxCell cell : lastExpandedGeneration) {
+            Object[] outgoing = graph.getOutgoingEdges(cell);
+            for (Object edge : outgoing) {
+                mxCell target = (mxCell) ((mxCell) edge).getTarget();
+                if (graph.getModel().isVisible(target)) {
+                    nextGeneration.add(target);
+                }
+            }
+        }
+        
+        return nextGeneration;
+    }
+
+    // Add this helper method
+    private void expandSubtree(mxCell cell) {
+        if (cell == null) return;
+        
+        if (graph.isCellCollapsed(cell)) {
+            // Get all descendants
+            List<Object> descendants = new ArrayList<>();
+            getDescendants(cell, descendants);
+            
+            // Set visibility and style
+            for (Object descendant : descendants) {
+                graph.getModel().setVisible(descendant, true);
+            }
+            
+            // Update cell style and label
+            String cellValue = extractPersonName(cell);
+            cell.setValue(cellValue + LineageViewerStyles.COLLAPSE_ICON);
+            cell.setStyle(LineageViewerStyles.STYLE_EXPANDED);
+            graph.getModel().setCollapsed(cell, false);
+        }
+        
+        /* Recursively expand children
+        Object[] outgoing = graph.getOutgoingEdges(cell);
+        for (Object edge : outgoing) {
+            mxCell target = (mxCell) ((mxCell) edge).getTarget();
+            expandSubtree(target);
+        }
+            */
+
     }
 
     @Override
