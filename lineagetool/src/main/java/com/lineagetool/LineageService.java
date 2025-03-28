@@ -1,24 +1,29 @@
 package com.lineagetool;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 public class LineageService implements DoublyLinkedList<Node<Person>> {
-    private ArrayList<Node<Person>> roots;  // Store multiple root nodes
+    private final List<Node<Person>> heads;
+    private final Set<String> rootNodes;
     private int size = 0;
 
     public LineageService() {
-        roots = new ArrayList<>();
-        size = 0;
+        this.heads = new ArrayList<>();
+        this.rootNodes = new HashSet<>();
     }
 
     @Override
-    public void addFirst(Node<Person> data) {
-        if (data == null) return;
+    public void addFirst(Node<Person> node) {
+        if (node == null) return;
         
-        // Add as a new root node
-        roots.add(data);
+        heads.add(node);
+        rootNodes.add(node.val.getName());
         size++;
     }
 
@@ -26,10 +31,10 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
     public void addLast(Node<Person> data) {
         if (data == null) return;
         
-        if (roots.isEmpty()) {
-            roots.add(data);
+        if (heads.isEmpty()) {
+            heads.add(data);
         } else {
-            Node<Person> lastRoot = roots.get(roots.size() - 1);
+            Node<Person> lastRoot = heads.get(heads.size() - 1);
             lastRoot.next.add(data);
             data.prev.add(lastRoot);
         }
@@ -38,30 +43,32 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
 
     @Override
     public Node<Person> removeFirst() {
-        if (roots.isEmpty()) return null;
+        if (heads.isEmpty()) return null;
         
-        Node<Person> removed = roots.remove(0);
+        Node<Person> removed = heads.remove(0);
+        rootNodes.remove(removed.val.getName());
         size--;
         return removed;
     }
 
     @Override
     public Node<Person> removeLast() {
-        if (roots.isEmpty()) return null;
+        if (heads.isEmpty()) return null;
         
-        Node<Person> removed = roots.remove(roots.size() - 1);
+        Node<Person> removed = heads.remove(heads.size() - 1);
+        rootNodes.remove(removed.val.getName());
         size--;
         return removed;
     }
 
     @Override
     public Node<Person> getFirst() {
-        return roots.isEmpty() ? null : roots.get(0);
+        return heads.isEmpty() ? null : heads.get(0);
     }
 
     @Override
     public Node<Person> getLast() {
-        return roots.isEmpty() ? null : roots.get(roots.size() - 1);
+        return heads.isEmpty() ? null : heads.get(heads.size() - 1);
     }
 
     @Override
@@ -74,8 +81,53 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
         return size;
     }
 
-    public ArrayList<Node<Person>> getRoots() {
-        return roots;
+    public void removePerson(String name) {
+        if (name == null) {
+            System.out.println("No name provided for removePerson()");
+            return;
+        }
+        
+        // Search through all root trees
+        for (Node<Person> root : heads) {
+            Queue<Node<Person>> queue = new LinkedList<>();
+            queue.add(root);
+
+            while (!queue.isEmpty()) {
+                Node<Person> current = queue.poll();
+                
+                if (current.val.getName().equals(name)) {
+                    // Remove the parent-child relationship
+                    if (current.prev != null) {
+                        for (Node<Person> parent : current.prev) {
+                            parent.next.remove(current);
+                        }
+                    }
+                    if (current.next != null) {
+                        for (Node<Person> child : current.next) {
+                            child.prev.remove(current);
+                        }
+                    }
+                    size--;
+                    return;
+                }
+                
+                if (current.next != null) {
+                    queue.addAll(current.next);
+                }
+            }
+        }
+    }
+
+    public List<Node<Person>> getHeads() {
+        return heads;
+    }
+
+    public Set<String> getRootNodes() {
+        Set<String> roots = new HashSet<>();
+        for (Node<Person> head : heads) {
+            roots.add(head.val.getName());
+        }
+        return Collections.unmodifiableSet(roots);
     }
 
     public void addChild(Node<Person> child, String parentName) {
@@ -84,7 +136,7 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
         }
 
         // Search through all root trees for the parent
-        for (Node<Person> root : roots) {
+        for (Node<Person> root : heads) {
             Queue<Node<Person>> queue = new LinkedList<>();
             queue.add(root);
 
@@ -116,7 +168,7 @@ public class LineageService implements DoublyLinkedList<Node<Person>> {
 
     public Node<Person> getNode(String name) {
         // Search through all root trees
-        for (Node<Person> root : roots) {
+        for (Node<Person> root : heads) {
             Queue<Node<Person>> queue = new LinkedList<>();
             queue.add(root);
 
