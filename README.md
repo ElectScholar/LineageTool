@@ -10,6 +10,8 @@ LineageTool is a Java-based genealogy visualization application that helps users
 - **Information Panel**: View detailed information about selected family members
 - **Multi-Root Support**: Display multiple family trees simultaneously
 - **Smooth Navigation**: Enhanced scrolling and zooming capabilities
+- **Search Functionality**: Search function allows collapsing of irrelevant information and view lineage of specific person in tree.
+- **Mass Collapsing/Expanding** can collapse entire tree and slowly expand by each generation
 
 ## Technical Stack
 - Java Swing for GUI components
@@ -28,7 +30,8 @@ LineageTool is a Java-based genealogy visualization application that helps users
 git clone https://github.com/your-username/LineageTool.git
 cd LineageTool
 
-# Build with Maven
+# Build with Maven also ensure correct sub directory folder
+cd ./lineagetool
 mvn clean install
 
 # Run the application
@@ -48,11 +51,8 @@ mvn exec:java -Dexec.mainClass="com.lineagetool.App"
 - **Drag**: Click and drag nodes to rearrange the tree
 
 ### Adding Family Members
-```java
-LineageService service = new LineageService();
-service.addPerson("Isaac", new String[]{"Patriarch"}, null);
-service.addPerson("Jacob", new String[]{"Son of Isaac"}, "Isaac");
-```
+Lineages are all controlled by single text file with example tree pre filled out.
+(Run time data modification on the way)
 
 ## Development
 
@@ -61,15 +61,8 @@ service.addPerson("Jacob", new String[]{"Son of Isaac"}, "Isaac");
 lineagetool/
 ├── src/main/java/com/lineagetool/
 │   ├── App.java           # Application entry point
-│   ├── LineageService.java # Core lineage management
-│   ├── LineageViewer.java # GUI visualization
-│   └── Person.java        # Person entity model
-└── pom.xml               # Maven configuration
-```
-
-### Building from Source
-```sh
-mvn clean package
+│__lineage.txt             # Modify tree data through here. 
+└── pom.xml                # Maven configuration
 ```
 
 ## Contributing
