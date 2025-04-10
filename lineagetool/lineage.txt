@@ -10,6 +10,10 @@
 [ROOT] Shua's Daughter|Wife of Judah||Genesis 38:2|Mother of Er, Onan, Shelah
 [ROOT] Tamar|Wife of Er||Genesis 38:6-30|Mother of Perez, Zerah, daughter-in-law of Judah. Tamar was married to Er and later married again to his brother Onan after Er died (this is similar to a practice called 'redemption' explained in Leviticus). For the full story, read Genesis 38.
 [ROOT] Asenath|Wife of Joseph||Genesis 41:45|Mother of Manasseh, Ephraim, daughter of Potiphera priest of On
+[ROOT] Puah|Hebrew Midwife||Exodus 1:15|Fearful midwife that disobeyed Pharoah
+[ROOT] Shiphrah|Hebrew Midwife||Exodus 1:15|Fearful midwife that disobeyed Pharoah
+[ROOT] Jethro|Priest of Midian||Exodus 2:16-22|Priest of God in the land of Midian, had 7 daughters one he gave the blessing to marry Moses (Zipporah).
+[ROOT] MosesDad|Placeholder for Moses' Dad||Exodus 2|Placeholder for Moses' dad so Aaron and Moses can have relations.
 Esau|Father of Edomites||Genesis 25-36|Father of Edomites, gave away birthright to Jacob for a bowl of soup|Isaac
 Eliphaz|Father of Temanites||Genesis 36:4-12|Father of Temanites, son of Esau|Esau,Adah
 Amalek|Father of Amalekites||Genesis 36:12|Father of Amalekites, son of Eliphaz|Eliphaz,Timna
@@ -58,7 +62,7 @@ Jahzeel|Naphtalite||Genesis 46:24|son of Naphtali|Naphtali
 Guni|Naphtalite||Genesis 46:24|son of Naphtali|Naphtali
 Jezer|Naphtalite||Genesis 46:24|son of Naphtali|Naphtali
 Shillem|Naphtalite||Genesis 46:24|son of Naphtali|Naphtali
-Gad|Patriarch of Gad Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 6th born son of 12 given by Zilpah servant of Leah|Jacob
+Gad|Patriarch of Gad Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 6th born son of 12 given by Zilpah servant of Leah|Jacob,Zilpah
 Ziphion|Gadite||Genesis 46:16|son of Gad|Gad
 Haggi|Gadite||Genesis 46:16|son of Gad|Gad
 Shuni|Gadite||Genesis 46:16|son of Gad|Gad
@@ -66,7 +70,7 @@ Ezbon|Gadite||Genesis 46:16|son of Gad|Gad
 Eri|Gadite||Genesis 46:16|son of Gad|Gad
 Arodi|Gadite||Genesis 46:16|son of Gad|Gad
 Areli|Gadite||Genesis 46:16|son of Gad|Gad
-Asher|Patriarch of Asher Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 7th born son of 12 second given by Zilpah servant of Leah|Jacob
+Asher|Patriarch of Asher Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 7th born son of 12 second given by Zilpah servant of Leah|Jacob,Zilpah
 Imnah|Asherite||Genesis 46:17|son of Asher|Asher
 Ishvah|Asherite||Genesis 46:17|son of Asher|Asher
 Ishvi|Asherite||Genesis 46:17|son of Asher|Asher
@@ -84,10 +88,10 @@ Sered|Zebulunite||Genesis 46:14|son of Zebulun|Zebulun
 Elon|Zebulunite||Genesis 46:14|son of Zebulun|Zebulun
 Jahleel|Zebulunite||Genesis 46:14|son of Zebulun|Zebulun
 Dinah|Israelite (No Tribe)||Genesis 29-50|Most of stories found in Genesis, daughter of Jacob/Israel|Jacob
-Joseph|Israelite (No Tribe)|110|Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 10th born son of 12|Jacob
+Joseph|Israelite (No Tribe)|110|Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 10th born son of 12|Jacob,Rachel
 Manasseh|Patriarch of Manasseh Tribe||Genesis 41:51|Most of stories found in Genesis, son of Joseph|Joseph,Asenath
 Ephraim|Patriarch of Ephraim Tribe||Genesis 41:52|Most of stories found in Genesis, son of Joseph|Joseph,Asenath
-Benjamin|Patriarch of Benjamin Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 11th born son of 12|Jacob
+Benjamin|Patriarch of Benjamin Tribe||Genesis 29-50|Most of stories found in Genesis, son of Jacob/Israel 11th born son of 12|Jacob,Rachel
 Bela|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
 Becher|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
 Ashbel|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
@@ -98,3 +102,7 @@ Rosh|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
 Muppim|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
 Huppim|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
 Ard|Benjaminite||Genesis 46:21|son of Benjamin|Benjamin
+Moses|Levite||Exodus-Deuteronomy|Chosen by God to lead Israelites out of slavery. (need to connect to main tree soon)|MosesDad
+Aaron|Levite||Exodus-Numbers|Chosen as the first in a dynasty of priests until Eli.|MosesDad
+Zipporah|Midianite||Exodus 2:21|Daughter of Jethro Priest of Midian|Jethro
+Gershom|Levite||Exodus 2:22|son of Moses|Moses,Zipporah
