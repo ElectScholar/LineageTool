@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.lineagetool.AppTest" time="0.031" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.lineagetool.AppTest" time="0.038" tests="3" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
-    <property name="java.class.path" value="/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/test-classes:/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/classes:/Users/gabrielsirvent/.m2/repository/junit/junit/4.11/junit-4.11.jar:/Users/gabrielsirvent/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/gabrielsirvent/.m2/repository/org/jgrapht/jgrapht-ext/1.5.2/jgrapht-ext-1.5.2.jar:/Users/gabrielsirvent/.m2/repository/org/jgrapht/jgrapht-core/1.5.2/jgrapht-core-1.5.2.jar:/Users/gabrielsirvent/.m2/repository/org/jheaps/jheaps/0.14/jheaps-0.14.jar:/Users/gabrielsirvent/.m2/repository/org/apfloat/apfloat/1.10.1/apfloat-1.10.1.jar:/Users/gabrielsirvent/.m2/repository/com/github/vlsi/mxgraph/jgraphx/4.2.2/jgraphx-4.2.2.jar:"/>
+    <property name="java.class.path" value="/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/test-classes:/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/classes:/Users/gabrielsirvent/.m2/repository/junit/junit/4.11/junit-4.11.jar:/Users/gabrielsirvent/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/gabrielsirvent/.m2/repository/org/jgrapht/jgrapht-ext/1.5.2/jgrapht-ext-1.5.2.jar:/Users/gabrielsirvent/.m2/repository/org/jgrapht/jgrapht-core/1.5.2/jgrapht-core-1.5.2.jar:/Users/gabrielsirvent/.m2/repository/org/jheaps/jheaps/0.14/jheaps-0.14.jar:/Users/gabrielsirvent/.m2/repository/org/apfloat/apfloat/1.10.1/apfloat-1.10.1.jar:/Users/gabrielsirvent/.m2/repository/com/github/vlsi/mxgraph/jgraphx/4.2.2/jgraphx-4.2.2.jar:/Users/gabrielsirvent/.m2/repository/com/mxgraph/mxgraph-all/4.0.0/mxgraph-all-4.0.0.jar:/Users/gabrielsirvent/.m2/repository/com/mxgraph/mxgraph-core/4.0.0/mxgraph-core-4.0.0.jar:/Users/gabrielsirvent/.m2/repository/com/mxgraph/mxgraph-swing/4.0.0/mxgraph-swing-4.0.0.jar:"/>
     <property name="java.vm.vendor" value="Homebrew"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.vendor.url" value="https://github.com/Homebrew/homebrew-core/issues"/>
@@ -12,10 +12,10 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/surefire/surefirebooter17114378934871812429.jar /Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/surefire 2025-03-26T12-22-54_769-jvmRun1 surefire9040411095013028997tmp surefire_014858726268719593091tmp"/>
+    <property name="sun.java.command" value="/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/surefire/surefirebooter-20250410134532365_3.jar /Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/surefire 2025-04-10T13-45-31_755-jvmRun1 surefire-20250410134532365_1tmp surefire_0-20250410134532365_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/test-classes:/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/classes:/Users/gabrielsirvent/.m2/repository/junit/junit/4.11/junit-4.11.jar:/Users/gabrielsirvent/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/gabrielsirvent/.m2/repository/org/jgrapht/jgrapht-ext/1.5.2/jgrapht-ext-1.5.2.jar:/Users/gabrielsirvent/.m2/repository/org/jgrapht/jgrapht-core/1.5.2/jgrapht-core-1.5.2.jar:/Users/gabrielsirvent/.m2/repository/org/jheaps/jheaps/0.14/jheaps-0.14.jar:/Users/gabrielsirvent/.m2/repository/org/apfloat/apfloat/1.10.1/apfloat-1.10.1.jar:/Users/gabrielsirvent/.m2/repository/com/github/vlsi/mxgraph/jgraphx/4.2.2/jgraphx-4.2.2.jar:"/>
+    <property name="surefire.test.class.path" value="/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/test-classes:/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/classes:/Users/gabrielsirvent/.m2/repository/junit/junit/4.11/junit-4.11.jar:/Users/gabrielsirvent/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/gabrielsirvent/.m2/repository/org/jgrapht/jgrapht-ext/1.5.2/jgrapht-ext-1.5.2.jar:/Users/gabrielsirvent/.m2/repository/org/jgrapht/jgrapht-core/1.5.2/jgrapht-core-1.5.2.jar:/Users/gabrielsirvent/.m2/repository/org/jheaps/jheaps/0.14/jheaps-0.14.jar:/Users/gabrielsirvent/.m2/repository/org/apfloat/apfloat/1.10.1/apfloat-1.10.1.jar:/Users/gabrielsirvent/.m2/repository/com/github/vlsi/mxgraph/jgraphx/4.2.2/jgraphx-4.2.2.jar:/Users/gabrielsirvent/.m2/repository/com/mxgraph/mxgraph-all/4.0.0/mxgraph-all-4.0.0.jar:/Users/gabrielsirvent/.m2/repository/com/mxgraph/mxgraph-core/4.0.0/mxgraph-core-4.0.0.jar:/Users/gabrielsirvent/.m2/repository/com/mxgraph/mxgraph-swing/4.0.0/mxgraph-swing-4.0.0.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/Users/gabrielsirvent"/>
     <property name="user.language" value="en"/>
@@ -29,7 +29,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/surefire/surefirebooter17114378934871812429.jar"/>
+    <property name="surefire.real.class.path" value="/Users/gabrielsirvent/Documents/AI-Help/LineageTool/lineagetool/target/surefire/surefirebooter-20250410134532365_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="23.0.2"/>
@@ -58,7 +58,19 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="NodeTests" classname="com.lineagetool.AppTest" time="0.018"/>
-  <testcase name="LineageTest" classname="com.lineagetool.AppTest" time="0"/>
-  <testcase name="add" classname="com.lineagetool.AppTest" time="0"/>
+  <testcase name="NodeTests" classname="com.lineagetool.AppTest" time="0.023">
+    <system-err><![CDATA[Apr 10, 2025 1:45:32 PM com.lineagetool.AppTest NodeTests
+INFO: Node test: true
+]]></system-err>
+  </testcase>
+  <testcase name="LineageTest" classname="com.lineagetool.AppTest" time="0.0">
+    <system-err><![CDATA[Apr 10, 2025 1:45:32 PM com.lineagetool.AppTest LineageTest
+INFO: Empty List test = false
+]]></system-err>
+  </testcase>
+  <testcase name="add" classname="com.lineagetool.AppTest" time="0.0">
+    <system-err><![CDATA[Apr 10, 2025 1:45:32 PM com.lineagetool.AppTest add
+INFO: add first node = Bartholomew
+]]></system-err>
+  </testcase>
 </testsuite>

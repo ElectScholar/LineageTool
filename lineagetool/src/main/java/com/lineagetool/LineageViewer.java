@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -31,15 +30,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.border.EmptyBorder;
+import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxRectangle;
-import com.mxgraph.view.mxGraph; // Correct import for Rectangle
-// Removed incorrect import
-//import javafx.scene.shape.Rectangle;
+import com.mxgraph.view.mxGraph;
 
 public class LineageViewer extends AbstractLineageViewer implements GraphOperations {
     // Graph components
@@ -59,8 +57,8 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
     private final List<Object> currentlyHighlighted = new ArrayList<>();
 
     // Toolbar buttons
-    private JButton zoomInButton, zoomOutButton, collapseAllButton, expandAllButton;
-    private JToggleButton searchModeButton;
+    protected JButton zoomInButton, zoomOutButton, collapseAllButton, expandAllButton;
+    protected JToggleButton searchModeButton;
 
     public LineageViewer(LineageService lineageService) {
         super(lineageService, new ArrayList<>(Collections.singletonList("Isaac")));
@@ -71,6 +69,7 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
 
     @Override
     protected void initializeComponents() {
+        customizeFrame();
         initializeGraph();
         createUIComponents();
         layoutComponents();
@@ -95,22 +94,25 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         graph.setDisconnectOnMove(false);
         graphComponent.setTripleBuffered(true);
         graphComponent.setAntiAlias(true);
-        graphComponent.setGridVisible(true);
-        graphComponent.setGridColor(new Color(240, 240, 240));
+        graphComponent.setGridVisible(false);
+        // use dynamic colors:
+        Color backgroundColor = new Color(175, 186, 183); // Use PALE_GREEN from palette
+        graphComponent.getViewport().setBackground(backgroundColor);
     }
 
     private void createUIComponents() {
         createToolbar();
         createSearchPanel();
         createInfoDialog();
-        customizeFrame();
     }
 
-    private void customizeFrame() {
+    protected void customizeFrame() {
+        setUndecorated(true);
         setTitle("Lineage Viewer");
         setSize(1200, 800);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
     }
 
     private void layoutComponents() {
@@ -123,8 +125,8 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
     private void createToolbar() {
         toolbarPanel = new JPanel();
         toolbarPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        toolbarPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        toolbarPanel.setBackground(new Color(240, 240, 240));
+        toolbarPanel.setBorder(new LineBorder(new Color(0x49, 0x62, 0x46), 3, true)); // Axolotl border
+        toolbarPanel.setBackground(new Color(0x97, 0xb6, 0xb1)); // Summer Green background
 
         // Create buttons
         zoomInButton = createStyledButton("Zoom In", null);
@@ -132,6 +134,7 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         collapseAllButton = createStyledButton("Collapse All", null);
         expandAllButton = createStyledButton("Expand All", null);
         searchModeButton = new JToggleButton("Search Mode");
+        styleToggleButton(searchModeButton);
 
         // Add button actions
         zoomInButton.addActionListener(e -> graphComponent.zoomIn());
@@ -154,7 +157,10 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         toolbarPanel.add(searchModeButton);
     }
 
-    private JButton createStyledButton(String text, Icon icon) {
+    /**
+     * Update the createStyledButton method to use the new color palette.
+     */
+    private JButton createStyledButton(String text, javax.swing.Icon icon) {
         JButton button = new JButton(text, icon);
         button.setFocusPainted(false);
         button.setContentAreaFilled(false);
@@ -162,20 +168,72 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         button.setFont(new Font("Arial", Font.BOLD, 12));
         button.setPreferredSize(new Dimension(120, 35));
         
-        button.addMouseListener(new MouseAdapter() {
+        // Use new palette colors
+        Color textColor = new Color(230, 235, 233); // ALMOST_WHITE
+        Color borderColor = new Color(113, 129, 123); // LIGHT_GREEN
+        
+        button.setForeground(textColor);
+        button.setBorder(BorderFactory.createLineBorder(borderColor, 1));
+        
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) {
+            public void mouseEntered(java.awt.event.MouseEvent e) {
                 button.setContentAreaFilled(true);
-                button.setBackground(new Color(220, 220, 220));
+                button.setBackground(new Color(65, 79, 73)); // MID_GREEN
             }
 
             @Override
-            public void mouseExited(MouseEvent e) {
+            public void mouseExited(java.awt.event.MouseEvent e) {
                 button.setContentAreaFilled(false);
             }
         });
 
         return button;
+    }
+    
+    private void styleToggleButton(JToggleButton button) {
+
+        button.setFocusPainted(false);
+        button.setFont(new Font("Arial", Font.BOLD, 12));
+        button.setPreferredSize(new Dimension(120, 35));
+        
+        // Use new palette colors
+        Color textColor = new Color(230, 235, 233); // ALMOST_WHITE
+        Color borderColor = new Color(113, 129, 123); // LIGHT_GREEN
+        Color hoverColor = new Color(65, 79, 73); // MID_GREEN
+        
+        button.setForeground(textColor);
+        button.setBorder(BorderFactory.createLineBorder(borderColor, 1));
+
+        button.setFocusPainted(false);
+        button.setFont(new Font("Arial", Font.BOLD, 12));
+        button.setPreferredSize(new Dimension(120, 35));
+        button.setForeground(new Color(0x49, 0x62, 0x46)); // Axolotl text
+        button.setBorder(BorderFactory.createLineBorder(new Color(0x49, 0x62, 0x46), 1)); // Axolotl border
+        
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (!button.isSelected()) {
+                    button.setBackground(new Color(0xac, 0xcf, 0xc5)); // Jet Stream hover
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (!button.isSelected()) {
+                    button.setBackground(UIManager.getColor("Button.background"));
+                }
+            }
+        });
+        
+        button.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                button.setBackground(new Color(0xac, 0xcf, 0xc5)); // Jet Stream selected
+            } else {
+                button.setBackground(UIManager.getColor("Button.background"));
+            }
+        });
     }
 
     private void createInfoDialog() {
@@ -187,9 +245,11 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         infoPanel.setLineWrap(true);
         infoPanel.setWrapStyleWord(true);
         infoPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createRaisedBevelBorder(),
+            BorderFactory.createLineBorder(new Color(0x49, 0x62, 0x46), 2), // Axolotl border
             BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
+        infoPanel.setBackground(new Color(0xdf, 0xea, 0xe9)); // Mystic background
+        infoPanel.setForeground(new Color(0x49, 0x62, 0x46)); // Axolotl text
         
         JScrollPane scrollPane = new JScrollPane(infoPanel);
         scrollPane.setPreferredSize(new Dimension(250, 150));
@@ -199,8 +259,14 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
 
     private JPanel createSearchPanel() {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.setBackground(new Color(0x97, 0xb6, 0xb1)); // Summer Green background
+        
         searchField = new JTextField(20);
-        JButton clearButton = new JButton("Clear");
+        searchField.setBackground(new Color(0xdf, 0xea, 0xe9)); // Mystic background
+        searchField.setForeground(new Color(0x49, 0x62, 0x46)); // Axolotl text
+        searchField.setBorder(BorderFactory.createLineBorder(new Color(0x49, 0x62, 0x46), 1)); // Axolotl border
+        
+        JButton clearButton = createStyledButton("Clear", null);
         
         clearButton.addActionListener(e -> {
             searchField.setText("");
@@ -391,8 +457,6 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
             .trim();
     }
 
-
-
     @Override
     protected void buildGraph() {
         graph.getModel().beginUpdate();
@@ -444,7 +508,7 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
             vertexMap.put(personName, vertex);
             
             if (parentVertex != null) {
-                graph.insertEdge(parent, null, "", parentVertex, vertex, "strokeColor=#666666");
+                graph.insertEdge(parent, null, "", parentVertex, vertex, LineageViewerStyles.EDGE_STYLE_NORMAL);
             }
     
             for (Node<Person> child : personNode.next) {
@@ -519,7 +583,7 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
                             mxCell.setStyle(isCollapsed ? LineageViewerStyles.STYLE_COLLAPSED : LineageViewerStyles.STYLE_EXPANDED);
                         }
                     } else {
-                        mxCell.setStyle("strokeColor=#666666");
+                        mxCell.setStyle(LineageViewerStyles.EDGE_STYLE_NORMAL);
                     }
                 }
             }
