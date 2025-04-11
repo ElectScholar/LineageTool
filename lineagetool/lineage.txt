@@ -1,4 +1,5 @@
-[ROOT] Isaac|Patriarch of Israel||Most of the stories found in Genesis|Father of Israel, given new name by God meaning 'to struggle with God'
+[ROOT] Adam|First Man||Genesis 2:4-5|First Man in charge of all the animals. Falls prey to Satan's schemes and eats forbidden fruit. No natural conception but shaped from the earth.
+[ROOT] Eve|First Woman||Genesis 2:18-5|First Woman shaped out of Adam's rib. Supposed to be helper to Adam and is first to fall prey to Satan's deception. (No natural conception so treating as root node)
 [ROOT] Adah|Wife of Esau||Most of the stories found in Genesis|Mother of Eliphaz, Canaanite wife of Esau
 [ROOT] Basemath|Wife of Esau||Most of the stories found in Genesis|Mother of Reuel, daughter of Elon the Hittite
 [ROOT] Oholibamah|Wife of Esau||Genesis 36:2-3|Mother of Jeush, Jalam, Korah. Daughter of Anah daughter of Zibeon the Hivite
@@ -14,6 +15,97 @@
 [ROOT] Shiphrah|Hebrew Midwife||Exodus 1:15|Fearful midwife that disobeyed Pharoah
 [ROOT] Jethro|Priest of Midian||Exodus 2:16-22|Priest of God in the land of Midian, had 7 daughters one he gave the blessing to marry Moses (Zipporah).
 [ROOT] MosesDad|Placeholder for Moses' Dad||Exodus 2|Placeholder for Moses' dad so Aaron and Moses can have relations.
+Cain|First Murderer||Genesis 4|Cain was the first son of Adam and Eve yet most known for being the first murderer as he later slays his younger brother Abel and is cursed.|Adam,Eve
+Enoch|Son of Cain||Genesis 4:17|Cain's first born in the land of Nod|Cain
+Abel|Son of Adam||Genesis 4|Abel was humble before the Lord and was envied for God's acknoledgement of Abel and killed him.|Adam,Eve
+Seth|Son of Adam||Genesis 5|Seth was a son of Adam in an attempt to father a child that wasn't a murderer (see Genesis 5)|Adam,Eve
+Enosh|Son of Seth||Genesis (placeholder)|son of Seth|Seth
+Kenan|Son of Enosh||Genesis (placeholder)|Son of Seth|Seth
+Mahalalel|Son of Kenan||Genesis (placeholder)|Son of Kenan|Kenan
+Jared|Son of Mahalalel||Genesis (placeholder)|Son of Mahalalel|Mahalalel
+Enoch|Son of Jared||Genesis (placeholder)|Son of Jared. Only regular human to never really die because he walked with God 300 years then just left. God took him|Jared
+Methuselah|Longest Living Man||Genesis (placeholder)|Lived 969 years and inferrred to be a marker for the start of when great flood would occur.|Enoch
+Lamech|Son of Methuselah||Genesis (placeholder)|Son of Methuselah|Methuselah
+Noah|Son of Lamech||Genesis (placeholder)|Created the Ark and with the help of God filled it with 2 of every animal. escaped God's wrath on humanity's wickedness.|Lamech
+Shem|Son of Noah||Genesis (placeholder)|Son of Noah|Noah
+Elam|Son of Shem||Genesis 10:22|Son of Shem|Shem
+Asshur|Son of Shem||Genesis 10:22|Son of Shem|Shem
+Arphachshad|Son of Shem||Genesis 10:22|Son of Shem, ancestor of Abraham|Shem
+Shelah|Son of Arphachshad||Genesis 10:24|Son of Arphachshad|Arphachshad
+Eber|Son of Shelah||Genesis 10:24|Son of Shelah|Shelah
+Peleg|Son of Eber||Genesis 10:25|Son of Eber, "In his days the Earth was divided"|Eber
+Reu|Son of Peleg||Genesis 10:25|Son of Peleg|Peleg
+Serug|Son of Reu||Genesis 10:26|Son of Reu|Reu
+Nahor|Son of Serug||Genesis 11:22|Son of Serug|Serug
+Terah|Son of Nahor||Genesis 11:24|Son of Nahor, father of Abram (Abraham)|Nahor
+Abraham|Originator of God's Covenant||Genesis 12-25|Abram Later renamed Abraham, called by God to become the father of many nations|Terah
+Isaac|Son of Abraham||Most of the stories found in Genesis|Father of Israel, given new name by God meaning 'to struggle with God'|Abraham
+Joktan|Son of Eber||Genesis 10:25|Son of Eber, Brother of Peleg|Eber
+Almodad|Son of Joktan||Genesis 10:26|Son of Joktan|Joktan
+Sheleph|Son of Joktan||Genesis 10:26|Son of Joktan|Joktan
+Hazarmaveth|Son of Joktan||Genesis 10:26|Son of Joktan|Joktan
+Jerah|Son of Joktan||Genesis 10:26|Son of Joktan|Joktan
+Hadoram|Son of Joktan||Genesis 10:26|Son of Joktan|Joktan
+Uzal|Son of Joktan||Genesis 10:27|Son of Joktan|Joktan
+Diklah|Son of Joktan||Genesis 10:27|Son of Joktan|Joktan
+Obal|Son of Joktan||Genesis 10:27|Son of Joktan|Joktan
+Abimael|Son of Joktan||Genesis 10:27|Son of Joktan|Joktan
+Sheba|Son of Joktan||Genesis 10:28|Son of Joktan|Joktan
+Ophir|Son of Joktan||Genesis 10:29|Son of Joktan|Joktan
+Havilah|Son of Joktan||Genesis 10:29|Son of Joktan|Joktan
+Jobab|Son of Joktan||Genesis 10:29|Son of Joktan|Joktan
+Lud|Son of Shem||Genesis 10:22|Son of Shem|Shem
+Aram|Son of Shem||Genesis 10:22|Son of Shem|Shem
+Uz|Son of Aram||Genesis 10:23|Son of Aram|Aram
+Hul|Son of Aram||Genesis 10:23|Son of Aram|Aram
+Gether|Son of Aram||Genesis 10:23|Son of Aram|Aram
+Meshech|Son of Aram||Genesis 10:23|Son of Aram|Aram
+Ham|Son of Noah||Genesis (placeholder)|Son of Noah|Noah
+Cush|Son of Ham||Genesis 10:6|Son of Ham|Ham
+Seba|Son of Cush||Genesis 10:7|Son of Cush|Cush
+Havilah|Son of Cush||Genesis 10:7|Son of Cush|Cush
+Sabtah (Sabta)|Son of Cush||Genesis 10:7|Son of Cush|Cush
+Raamah|Son of Cush||Genesis 10:7|Son of Cush|Cush
+Sheba|Son of Raamah||Genesis 10:7|Son of Raamah|Raamah
+Dedan|Son of Raamah||Genesis 10:7|Son of Raamah|Raamah
+Sabteca|Son of Cush||Genesis 10:7|Son of Cush|Cush
+Nimrod|Son of Cush||Genesis 10:8|"First on earth to be a mighty man"|Cush
+Egypt|Son of Ham ||Genesis 10:6|Son of Ham|Ham
+Ludim|Descendant of Egypt||Genesis 10:13|Descendant of Egypt|Egypt
+Anamim|Descendant of Egypt||Genesis 10:13|Descendant of Egypt|Egypt
+Lehabim|Descendant of Egypt||Genesis 10:13|Descendant of Egypt|Egypt
+Naphtuhim|Descendant of Egypt||Genesis 10:13|Descendant of Egypt|Egypt
+Pathrusim|Descendant of Egypt||Genesis 10:14|Descendant of Egypt|Egypt
+Casluhim|Descendant of Egypt||Genesis 10:14|Descendant of Egypt, Patriarch/Originator of the Phillistines|Egypt
+Caphtorim|Descendant of Egypt||Genesis 10:14|Descendant of Egypt|Egypt
+Put|Son of Ham||Genesis 10:6|Son of Ham|Ham
+Canaan|Son of Ham||Genesis 10:6|Son of Ham|Ham
+Sidon|Firstborn of Canaan||Genesis 10:15|Firstborn son of Canaan|Canaan
+Heth|Son of Canaan||Genesis 10:15|Son of Canaan|Canaan
+Jebusites|Descendants of Heth||Genesis 10:16|Descendants of Heth|Canaan
+Amorites|Descendants of Heth||Genesis 10:16|Descendants of Heth|Canaan
+Girgashites|Descendants of Heth||Genesis 10:16|Descendants of Heth|Canaan
+Hivites|Descendants of Canaan||Genesis 10:17|Descendants of Canaan|Canaan
+Arkites|Descendants of Canaan||Genesis 10:17|Descendants of Canaan|Canaan
+Sinites|Descendants of Canaan||Genesis 10:17|Descendants of Canaan|Canaan
+Arvadites|Descendants of Canaan||Genesis 10:18|Descendants of Canaan|Canaan
+Zemarites|Descendants of Canaan||Genesis 10:18|Descendants of Canaan|Canaan
+Hamathites|Descendants of Canaan||Genesis 10:18|Descendants of Canaan|Canaan
+Japheth|Son of Noah||Genesis (placeholder)|Son of Noah|Noah
+Gomer|Son of Japheth||Genesis 10:2|Son of Japheth|Japheth
+Ashkenaz|Son of Gomer||Genesis 10:3|Son of Gomer|Gomer
+Riphath|Son of Gomer||Genesis 10:3|Son of Gomer|Gomer
+Togarmah|Son of Gomer||Genesis 10:3|Son of Gomer|Gomer
+Magog|Son of Japheth||Genesis 10:2|Son of Japheth|Japheth
+Madai|Son of Japheth||Genesis 10:2|Son of Japheth|Japheth
+Javan|Son of Japheth||Genesis 10:2|Son of Japheth|Japheth
+Elishah|Son of Javan||Genesis 10:4|Son of Javan|Javan
+Tarshish|Son of Javan||Genesis 10:4|Son of Javan|Javan
+Kittim|Son of Javan||Genesis 10:4|Son of Javan|Javan
+Rodanim|Son of Javan||Genesis 10:4|Son of Javan|Javan
+Tubal|Son of Japheth||Genesis 10:2|Son of Japheth|Japheth
+Meshech|Son of Japheth||Genesis 10:2|Son of Japheth|Japheth
+Tiras|Son of Japheth||Genesis 10:2|Son of Japheth|Japheth
 Esau|Father of Edomites||Genesis 25-36|Father of Edomites, gave away birthright to Jacob for a bowl of soup|Isaac
 Eliphaz|Father of Temanites||Genesis 36:4-12|Father of Temanites, son of Esau|Esau,Adah
 Amalek|Father of Amalekites||Genesis 36:12|Father of Amalekites, son of Eliphaz|Eliphaz,Timna
