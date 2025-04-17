@@ -1,6 +1,5 @@
 package com.lineagetool;
 
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /**
@@ -15,17 +14,12 @@ public class App {
             e.printStackTrace();
         }
 
-        FileRead fileRead = new FileRead("lineagetool/lineage.txt");
+        FileRead fileRead = new FileRead("lineage.txt");
         LineageService lineageService = fileRead.getLineageService();
         
-        SwingUtilities.invokeLater(() -> {
-            LineageViewer viewer = new LineageViewer(lineageService);
-            
-            for (String rootNode : fileRead.getRootNodes()) {
-                viewer.addRootNode(rootNode);
-            }
-            
-            viewer.setVisible(true);
-        });
+            // Create and show the integrated application
+            LineageViewerFrame frame = new LineageViewerFrame(lineageService, "Adam");
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
     }
 }
