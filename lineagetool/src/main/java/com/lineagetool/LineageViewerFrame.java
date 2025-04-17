@@ -5,9 +5,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 /**
  * LineageViewerFrame integrates the CustomFrame with LineageViewer
@@ -21,14 +21,14 @@ public class LineageViewerFrame extends CustomFrame {
      * 
      * @param lineageService the service providing lineage data
      */
-    public LineageViewerFrame(LineageService lineageService) {
+    public LineageViewerFrame(LineageService lineageService, String originalNode) {
         super("Lineage Viewer", 1200, 800);
         
         // Apply the new color palette from the image
         initializeWithNewPalette();
         
         // Create the lineage viewer component
-        lineageViewer = new LineageViewer(lineageService) {
+        lineageViewer = new LineageViewer(lineageService, originalNode) {
             @Override
             protected void customizeFrame() {
                 // Override to prevent LineageViewer from modifying the frame
@@ -156,19 +156,5 @@ public class LineageViewerFrame extends CustomFrame {
             }
         }
     }
-    
-    /**
-     * Application entry point.
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            // Create a sample lineage service
-            LineageService lineageService = new LineageService();
-            
-            // Create the integrated frame
-            LineageViewerFrame frame = new LineageViewerFrame(lineageService);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
+
 }

@@ -16,7 +16,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 /**
  * CustomFrame provides a JFrame with a custom title bar and styling.
@@ -222,25 +221,5 @@ public class CustomFrame extends JFrame {
         return panel;
     }
     
-    /**
-     * Example usage of the CustomFrame class.
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            // Create and configure the custom frame
-            CustomFrame frame = new CustomFrame("Lineage Viewer", 1200, 800);
-            
-            // Add some example content
-            JPanel mainPanel = new JPanel();
-            mainPanel.setBackground(new Color(240, 240, 240));
-            mainPanel.add(new JLabel("Your content goes here"));
-            
-            // Add the main panel to the content area
-            frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
-            
-            // Make the frame visible
-            frame.setLocationRelativeTo(null);  // Center on screen
-            frame.setVisible(true);
-        });
-    }
+
 }

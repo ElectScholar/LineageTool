@@ -60,8 +60,15 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
     protected JButton zoomInButton, zoomOutButton, collapseAllButton, expandAllButton;
     protected JToggleButton searchModeButton;
 
-    public LineageViewer(LineageService lineageService) {
-        super(lineageService, new ArrayList<>(Collections.singletonList("Isaac")));
+    //variable to determine original node
+    private String originalNode;
+
+    public void setOriginalNode(String node) {
+        this.originalNode = node;
+    }
+    public LineageViewer(LineageService lineageService, String original) {
+        super(lineageService, new ArrayList<>(Collections.singletonList(original)));
+        setOriginalNode(original);
         initializeComponents();
         setupEventHandlers();
         buildGraph();

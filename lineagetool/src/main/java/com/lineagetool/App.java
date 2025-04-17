@@ -18,7 +18,7 @@ public class App {
         LineageService lineageService = fileRead.getLineageService();
         
             // Create and show the integrated application
-            LineageViewerFrame frame = new LineageViewerFrame(lineageService);
+            LineageViewerFrame frame = new LineageViewerFrame(lineageService, "Adam");
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
     }
