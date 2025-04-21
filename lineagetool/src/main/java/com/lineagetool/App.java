@@ -14,7 +14,7 @@ public class App {
             e.printStackTrace();
         }
 
-        FileRead fileRead = new FileRead("lineage.txt");
+        FileRead fileRead = new FileRead("lineagetool/lineage.txt");
         LineageService lineageService = fileRead.getLineageService();
         
             // Create and show the integrated application
