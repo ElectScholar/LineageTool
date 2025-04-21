@@ -435,6 +435,7 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                         String searchTerm = searchField.getText().trim();
+                        expandAllNodes();
                         if (!searchTerm.isEmpty()) {
                             clearSearchHighlights();
                             searchAndFocusLineage(searchTerm);
@@ -682,26 +683,11 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
     public void expandAllNodes() {
         graph.getModel().beginUpdate();
         try {
-            Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+            Object parent = graph.getDefaultParent();
+            Object[] vertices = graph.getChildVertices(parent);
             for (Object vertex : vertices) {
                 if (vertex instanceof mxCell) {
-                    mxCell cell = (mxCell) vertex;
-                    if (graph.isCellCollapsed(cell)) {
-                        // Get all descendants
-                        List<Object> descendants = new ArrayList<>();
-                        getDescendants(cell, descendants);
-                        
-                        // Set visibility and style
-                        for (Object descendant : descendants) {
-                            graph.getModel().setVisible(descendant, true);
-                        }
-                        
-                        // Update cell style and label
-                        String cellValue = extractPersonName(cell);
-                        cell.setValue(cellValue + LineageViewerStyles.COLLAPSE_ICON);
-                        cell.setStyle(LineageViewerStyles.STYLE_EXPANDED);
-                        graph.getModel().setCollapsed(cell, false);
-                    }
+                    expandRecursively((mxCell) vertex);
                 }
             }
             graph.refresh();
@@ -709,6 +695,24 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
             graph.getModel().endUpdate();
         }
     }
+    
+    private void expandRecursively(mxCell cell) {
+        // Expand the current cell if it's collapsed
+        if (cell.isCollapsed()) {
+            setCollapsed(cell, false);
+        }
+    
+        // Get connected outgoing edges (assumes direction = parent -> child)
+        Object[] edges = graph.getOutgoingEdges(cell);
+        for (Object edge : edges) {
+            mxCell target = (mxCell) graph.getModel().getTerminal(edge, false); // false = target
+            if (target != null && target.isVertex()) {
+                expandRecursively(target);
+            }
+        }
+    }
+    
+    
 
     @Override
     public void clearSearchHighlights() {
