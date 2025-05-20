@@ -38,7 +38,10 @@ mvn clean install
 mvn exec:java -Dexec.mainClass="com.lineagetool.App"
 ```
 
-## Usage Guide
+## Uploading Tree
+- Tree currently does not allow during runtime manipulation of trees and only compiles tree at start with text file (see lineage.txt)
+
+## Usage Guide 
 
 ### Navigation
 - **Scroll**: Use mouse wheel to navigate vertically
