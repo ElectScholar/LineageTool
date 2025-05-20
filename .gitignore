@@ -3,3 +3,6 @@
 *.class
 *.lst
 TEST-com.lineagetool.AppTest.xml
+lineagetool-1.0-SNAPSHOT-jar-with-dependencies.jar
+lineagetool-1.0-SNAPSHOT.jar
+com.lineagetool.AppTest.txt
