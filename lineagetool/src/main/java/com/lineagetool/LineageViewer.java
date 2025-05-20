@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
@@ -451,11 +452,13 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
     private void handleCellClick(mxCell cell, MouseEvent e) {
         if (e.getClickCount() == 2) {  // Double click to collapse/expand
             toggleCollapse(cell);
-        } else if (e.getClickCount() == 1) {  // Single click for info
+        }
+        else if (e.getClickCount() == 1) {  // Single click for info
             String personName = extractPersonName(cell);
-            updateInfoPanel(personName);
+            updateInfoPanel(personName, e); // Pass the MouseEvent here
             highlightPathToRoot(cell);
         }
+
     }
 
     private String extractPersonName(mxCell cell) {
@@ -734,7 +737,7 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         }
     }
 
-    private void updateInfoPanel(String personName) {
+    private void updateInfoPanel(String personName, MouseEvent e) {
         if (personName == null || personName.isEmpty()) {
             infoPanel.setText("No details available.");
             return;
@@ -754,14 +757,16 @@ public class LineageViewer extends AbstractLineageViewer implements GraphOperati
         
         infoPanel.setText(sb.toString());
         
-        // Position dialog near mouse
-        Point mouseLocation = getMousePosition(true);
-        if (mouseLocation != null) {
-            infoDialog.setLocation(
-                mouseLocation.x + 200,  // Offset from cursor
-                mouseLocation.y + 200
-            );
-        }
+        // Get the point of the click relative to the graph component
+        Point clickPointInComponent = e.getPoint();
+        // Convert that point to screen coordinates
+        SwingUtilities.convertPointToScreen(clickPointInComponent, graphComponent.getGraphControl());
+
+        // Position dialog near the converted mouse location
+        infoDialog.setLocation(
+            clickPointInComponent.x + 20,  // Offset from cursor, adjusted for better placement
+            clickPointInComponent.y + 20
+        );
         
         infoDialog.setVisible(true);
     }

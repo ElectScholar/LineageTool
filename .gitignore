@@ -1,3 +1,5 @@
 .DS_Store
 # Ignore all .class files
 *.class
+*.lst
+TEST-com.lineagetool.AppTest.xml
