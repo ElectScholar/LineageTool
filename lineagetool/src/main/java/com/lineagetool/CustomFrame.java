@@ -107,7 +107,7 @@ public class CustomFrame extends JFrame {
 
         // Create close button
         closeButton = createButton("X", closeButtonColor); // Changed '×' to 'X'
-        closeButton.addActionListener(e -> dispose());
+        closeButton.addActionListener(e -> System.exit(0));
 
         // Add components to panels
         buttonPanel.add(minimizeButton);
